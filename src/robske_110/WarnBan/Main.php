@@ -54,7 +54,7 @@ class Main extends PluginBase implements Listener
                                 $INDEX++;
                                 $reason = $reason.TF::GREEN."Warnung ".TF::WHITE.$INDEX.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n";
                             }
-                            $reason = "Du wurdest gebannt: \n".$reason;
+                            $reason = "Du wurdest gebannt: \n\n\n\n\n".$reason;
                             $ip = $this->getServer()->getPlayer($args[0])->getAddress();
                     		$this->getServer()->getIPBans()->addBan($ip, $reason, null, $sender->getName());
                     		foreach($this->getServer()->getOnlinePlayers() as $player){
