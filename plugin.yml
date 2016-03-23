@@ -1,6 +1,6 @@
 name: WarnBan
 api: [1.13.0]
-version: 1.4.3
+version: 1.0.0
 load: POSTWORLD
 main: robske_110\WarnBan\Main
 author: robske_110
