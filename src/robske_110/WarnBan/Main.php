@@ -6,20 +6,9 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\math\Vector3;
-use pocketmine\tile\Sign;
-use pocketmine\event\block\SignChangeEvent;
 use pocketmine\Player;
-use pocketmine\entity\Entity;
-use pocketmine\event\player\PlayerLoginEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\entity\EntityLevelChangeEvent;
 
 class Main extends PluginBase implements Listener
 {
