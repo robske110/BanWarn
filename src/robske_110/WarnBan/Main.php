@@ -32,56 +32,74 @@ class Main extends PluginBase implements Listener
                     if($this->getServer()->getPlayer($args[0]) instanceof Player)
                     {
                         $playerName = $this->getServer()->getPlayer($args[0])->getName();
-                        $array = $this->warnsys->get($playerName, []); //Returns an empty array if the player has no previous warnings
+                        $playerID = $this->getServer()->getPlayer($args[0])->getClientId();
+                        $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings
                         $INDEX = count($array);
+                        if($Index == 0){
+                          $array[0] = ["RealPlayerName",$playerName];
+                        }
                         $INDEX++;
                         $array[$INDEX] = [$args[1], $args[2]];
-                        $this->warnsys->set($playerName, $array);
+                        $this->warnsys->set($playerID, $array);
                         $this->warnsys->save();
-                        $tempMsgS = TF::GREEN . "Der Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde mit dem Grund '".TF::DARK_GRAY.$args[1].TF::GREEN."' mit ".TF::DARK_GRAY.$args[2].TF::GREEN." Punkten gewarnt! Er hat insgesamt ".TF::DARK_GRAY.$this->countWPoints($playerName).TF::GREEN." Punkte.";
-                        $tempMsgToP = TF::RED . "DU WURDEST VON '".$sender->getName()."' MIT DEM GRUND '".TF::DARK_GRAY.$args[1].TF::RED."' mit ".TF::DARK_GRAY.$args[2].TF::RED." PUNKTEN GEWARNT! DU HAST ".TF::DARK_GRAY.$this->countWPoints($playerName).TF::RED." PUNKTE! MIT 10 PUNKTEN WIRST DU GEBANNT!";
+                        $tempMsgS = TF::GREEN . "Der Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde mit dem Grund '".TF::DARK_GRAY.$args[1].TF::GREEN."' mit ".TF::DARK_GRAY.$args[2].TF::GREEN." Punkten gewarnt! Er hat insgesamt ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Punkte."; //TODO::Translate
+                        $tempMsgToP = TF::RED . "DU WURDEST VON '".$sender->getName()."' MIT DEM GRUND '".TF::DARK_GRAY.$args[1].TF::RED."' mit ".TF::DARK_GRAY.$args[2].TF::RED." PUNKTEN GEWARNT! DU HAST ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." PUNKTE! MIT 10 PUNKTEN WIRST DU GEBANNT!"; //TODO::Translate
                         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
                         $this->sendMsgToSender($sender, $tempMsgS);
                         if($this->getTypeAsNameOfSender($sender) != "CONSOLE")
                         {
                             $this->getServer()->getLogger()->info($tempMsgS);
                         }
-                        if($this->countWPoints($playerName) >= 10){
+                        if($this->countWPoints($playerID) >= 10){
                             $reason = "";
-                            $tempStuffArray = $this->warnsys->get($playerName);
+                            $tempStuffArray = $this->warnsys->get($playerID);
                             foreach($tempStuffArray as $playerData)
                             {
                                 $INDEX++;
-                                $reason = $reason.TF::GREEN."Warnung ".TF::WHITE.$INDEX.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n";
+                                $reason = $reason.TF::GREEN."Warnung ".TF::WHITE.$INDEX.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
                             }
                             $reason = "Du wurdest gebannt: \n\n\n\n\n".$reason;
+                            //IP_Ban
+                    		    foreach($this->getServer()->getOnlinePlayers() as $player){
+                    			    if($player->getAddress() === $ip){
+                    				    $player->kick($reason, false);
+                    			    }
+                    		    }
                             $ip = $this->getServer()->getPlayer($args[0])->getAddress();
-                    		$this->getServer()->getIPBans()->addBan($ip, $reason, null, $sender->getName());
-                    		foreach($this->getServer()->getOnlinePlayers() as $player){
-                    			if($player->getAddress() === $ip){
-                    				$player->kick($reason, false);
-                    			}
-                    		}
-                    		$sender->getServer()->getNetwork()->blockAddress($ip, -1);
+                    		    $sender->getServer()->getNetwork()->blockAddress($ip, -1);
+                    		    $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
+                            //IP_Ban
+                            //Client-Ban
+                            //TODO
+                            //Client-Ban
                         }
                     }
                     else
                     {
                         $playerName = $args[0];
-                        $array = $this->warnsys->get($playerName, []); //Returns an empty array if the player has no previous warnings
-                        $INDEX = count($array);
-                        $INDEX++;
-                        $array[$INDEX] = [$args[1], $args[2]];
-                        $this->warnsys->set($playerName, $array);
-                        $this->warnsys->save();
-                        $tempMsgS = TF::GREEN . "Der Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde mit dem Grund '".TF::DARK_GRAY.$args[1].TF::GREEN."' mit ".TF::DARK_GRAY.$args[2].TF::GREEN." Punkten gewarnt! Er hat insgesamt ".TF::DARK_GRAY.$this->countWPoints($playerName).TF::GREEN." Punkte.";
-                        $this->sendMsgToSender($sender, $tempMsgS);
-                        if($this->getTypeAsNameOfSender($sender) != "CONSOLE")
-                        {
-                            $this->getServer()->getLogger()->info($tempMsgS);
+                        $playerID = getWarnPlayerByName($playerName);
+                        if($playerID != NULL){
+                          $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings
+                          $INDEX = count($array);
+                          if($Index == 0){
+                            $array[0] = ["RealPlayerName",$playerName];
+                          }
+                          $array[$INDEX] = [$args[1], $args[2]];
+                          $this->warnsys->set($playerID, $array);
+                          $this->warnsys->save();
+                          $tempMsgS = TF::GREEN . "Der Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde mit dem Grund '".TF::DARK_GRAY.$args[1].TF::GREEN."' mit ".TF::DARK_GRAY.$args[2].TF::GREEN." Punkten gewarnt! Er hat insgesamt ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Punkte."; //TODO::Translate
+                          $this->sendMsgToSender($sender, $tempMsgS);
+                          if($this->getTypeAsNameOfSender($sender) != "CONSOLE")
+                          {
+                              $this->getServer()->getLogger()->info($tempMsgS);
+                          }
+                          if($this->countWPoints($playerID) >= 10){
+                              $this->sendMsgToSender($sender, TF::RED."Du musst '".TF::DARK_GRAY.$playerName.TF::RED."' selber bannen, da er nicht online ist!"); //TODO::Translate //TODO::FixThis (AutoBan on join if over 10 points)
+                          }
                         }
-                        if($this->countWPoints($playerName) >= 10){
-                            $this->sendMsgToSender($sender, TF::RED."Du musst '".TF::DARK_GRAY.$playerName.TF::RED."' selber bannen, da er nicht online ist!");
+                        else
+                        {
+                          $this->sendMsgToSender($sender, TF::RED."Leider konnte '".TF::DARK_GRAY.$playerName.TF::RED."' nicht gewarnt werden, da er nicht Online ist, und keine bisherigen Warns hat!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
                         }
                     }
                 }
@@ -98,27 +116,29 @@ class Main extends PluginBase implements Listener
             if($this->getServer()->getPlayer($args[0]) instanceof Player)
             {
                 $playerName = $this->getServer()->getPlayer($args[0])->getName();
+                $playerID = $this->getServer()->getPlayer($args[0])->getClientID();
             }
             else
             {
                 $playerName = $args[0];
+                $playerID = getWarnPlayerByName($playerName);
             }
-            if($this->warnsys->exists($playerName))
+            if($this->warnsys->exists($playerID))
             {
-                $this->sendMsgToSender($sender, TF::GREEN."Warnungen für den Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' mit insgesamt ".$this->countWPoints($playerName)." Punkten:");
+                $this->sendMsgToSender($sender, TF::GREEN."Warnungen für den Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' mit insgesamt ".$this->countWPoints($playerID)." Punkten:"); //TODO::Translate
                 $INDEX = 0;
-                $tempStuffArray = $this->warnsys->get($playerName);
+                $tempStuffArray = $this->warnsys->get($playerID);
                 foreach($tempStuffArray as $playerData)
                 {
                     $INDEX++;
-                    $this->sendMsgToSender($sender, TF::GREEN."Warnung ".TF::WHITE.$INDEX.":");
-                    $this->sendMsgToSender($sender, TF::GREEN."Grund: ".TF::DARK_GRAY.$playerData[0]);
-                    $this->sendMsgToSender($sender, TF::GREEN."Punkte: ".TF::DARK_GRAY.$playerData[1]);
+                    $this->sendMsgToSender($sender, TF::GREEN."Warnung ".TF::WHITE.$INDEX.":"); //TODO::Translate
+                    $this->sendMsgToSender($sender, TF::GREEN."Grund: ".TF::DARK_GRAY.$playerData[0]); //TODO::Translate
+                    $this->sendMsgToSender($sender, TF::GREEN."Punkte: ".TF::DARK_GRAY.$playerData[1]); //TODO::Translate
                 }
             }
             else
             {
-                $this->sendMsgToSender($sender, TF::RED."Es gibt keine Warnungen für den Spieler '".TF::DARK_GRAY.$playerName.TF::RED."'!");
+                $this->sendMsgToSender($sender, TF::RED."Es gibt keine Warnungen für den Spieler '".TF::DARK_GRAY.$playerName.TF::RED."'!"); //TODO::Translate
             }
         }
         else
@@ -133,15 +153,19 @@ class Main extends PluginBase implements Listener
         }
         else
         {
-            $this->getServer()->getLogger()->info("[ServerCore-WarnSys] ".$message);
+            $this->getServer()->getLogger()->info("[WarnBan] ".$message);
         }
     }
-    public function countWPoints($playerName){
-        $tempStuffArray = $this->warnsys->get($playerName);
+    public function countWPoints($playerID){
+        $tempStuffArray = $this->warnsys->get($playerID);
         $count = 0;
+        $Index = 0;
         foreach($tempStuffArray as $playerData)
         {
+          if($Index != 0){
             $count = $count + $playerData[1];
+          }
+          $Index++;
         }
         return $count;
     }
