@@ -23,8 +23,8 @@ class Main extends PluginBase implements Listener
         $this->warnsys->save();
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
         if($this->config->get("ConfigVersion") != 1){
-            $this->config->set("max-warns-until-ban", 10);
-            $this->config->set("ConfigVersion", 1);
+            $this->config->set('max-warns-until-ban', 10);
+            $this->config->set('ConfigVersion', 1);
         }
         $this->warnsys->save();
     }
