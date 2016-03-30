@@ -26,7 +26,7 @@ class Main extends PluginBase implements Listener
             $this->config->set('max-warns-until-ban', 10);
             $this->config->set('ConfigVersion', 1);
         }
-        $this->warnsys->save();
+        $this->config->save();
     }
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 		switch($command->getName())
