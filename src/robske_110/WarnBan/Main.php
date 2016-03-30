@@ -46,7 +46,7 @@ class Main extends PluginBase implements Listener
                         {
                             $this->getServer()->getLogger()->info($tempMsgS);
                         }
-                        if($this->countWPoints($playerName) == 10){
+                        if($this->countWPoints($playerName) >= 10){
                             $reason = "";
                             $tempStuffArray = $this->warnsys->get($playerName);
                             foreach($tempStuffArray as $playerData)
