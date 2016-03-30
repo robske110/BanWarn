@@ -1,10 +1,10 @@
 Very soon:
-- Make everything IP-Based and after that ClientId for WarnPoints allocation and for Ban IP+ClientID
-- Config with setting for max-warn-points
+- **ClientID** for WarnPoints identification and for Ban IP+ClientID
+- Config with setting for **max-warn-points**
 Soon:
 - Config:
-   -IP-Ban
-   -Client-Ban
-   -IdentifyMethod: IP/Client
+  - IP-Ban [Default: true]
+  - Client-Ban [Default: true]
+  - IdentifyMethod: IP/Client [Default:Client]
 Maybe:
 - Language Translation file
