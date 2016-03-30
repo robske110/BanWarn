@@ -1,6 +1,6 @@
 <?php
 
-namespace robske_110\WarnBan;
+namespace robske_110\BanWarn;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
