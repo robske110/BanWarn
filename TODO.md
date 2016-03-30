@@ -1,2 +1,3 @@
 - Make everything IP-Based and after that ClientId for WarnPoints allocation and for Ban IP+ClientID
+- Config with setting for max-warn-points
 - Language Translation
