@@ -13,12 +13,19 @@ use pocketmine\utils\TextFormat as TF;
 class Main extends PluginBase implements Listener
 {
     public $warnsys;
+    public $config;
 
     public function onEnable()
     {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         @mkdir($this->getDataFolder());
         $this->warnsys = new Config($this->getDataFolder() . "warnsys.yml", Config::YAML, array());
+        $this->warnsys->save();
+        $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
+        if($this->config->get("ConfigVersion") != 1){
+            $this->config->set("max-warns-until-ban", 10);
+            $this->config->set("ConfigVersion", 1);
+        }
         $this->warnsys->save();
     }
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
@@ -43,14 +50,14 @@ class Main extends PluginBase implements Listener
                         $this->warnsys->set($playerID, $array);
                         $this->warnsys->save();
                         $tempMsgS = TF::GREEN . "Der Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde mit dem Grund '".TF::DARK_GRAY.$args[1].TF::GREEN."' mit ".TF::DARK_GRAY.$args[2].TF::GREEN." Punkten gewarnt! Er hat insgesamt ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Punkte."; //TODO::Translate
-                        $tempMsgToP = TF::RED . "DU WURDEST VON '".$sender->getName()."' MIT DEM GRUND '".TF::DARK_GRAY.$args[1].TF::RED."' mit ".TF::DARK_GRAY.$args[2].TF::RED." PUNKTEN GEWARNT! DU HAST ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." PUNKTE! MIT 10 PUNKTEN WIRST DU GEBANNT!"; //TODO::Translate
+                        $tempMsgToP = TF::RED . "DU WURDEST VON '".$sender->getName()."' MIT DEM GRUND '".TF::DARK_GRAY.$args[1].TF::RED."' mit ".TF::DARK_GRAY.$args[2].TF::RED." PUNKTEN GEWARNT! DU HAST ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." PUNKTE! MIT ".TF::DARK_GRAY.$this->config->get("max-warns-until-ban").TF::RED." PUNKTEN WIRST DU GEBANNT!"; //TODO::Translate
                         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
                         $this->sendMsgToSender($sender, $tempMsgS);
                         if($this->getTypeAsNameOfSender($sender) != "CONSOLE")
                         {
                             $this->getServer()->getLogger()->info($tempMsgS);
                         }
-                        if($this->countWPoints($playerID) >= 10){
+                        if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
                             $reason = "";
                             $tempStuffArray = $this->warnsys->get($playerID);
                             $Index = 0;
@@ -97,7 +104,7 @@ class Main extends PluginBase implements Listener
                           {
                               $this->getServer()->getLogger()->info($tempMsgS);
                           }
-                          if($this->countWPoints($playerID) >= 10){
+                          if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
                               $this->sendMsgToSender($sender, TF::RED."Du musst '".TF::DARK_GRAY.$playerName.TF::RED."' selber bannen, da er nicht online ist!"); //TODO::Translate //TODO::FixThis (AutoBan on join if over 10 points)
                           }
                         }
