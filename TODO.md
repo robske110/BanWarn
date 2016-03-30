@@ -6,6 +6,7 @@ Soon:
   - IP-Ban [Default: true]
   - Client-Ban [Default: true]
   - IdentifyMethod: IP/Client [Default:Client]
-<br>
+
+
 Maybe:
 - Language Translation file
