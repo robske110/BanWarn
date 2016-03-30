@@ -3,8 +3,8 @@ Very soon:
 - Config with setting for max-warn-points
 Soon:
 - Config:
-   IP-Ban
-   Client-Ban
-   IdentifyMethod: IP/Client
+   -IP-Ban
+   -Client-Ban
+   -IdentifyMethod: IP/Client
 Maybe:
 - Language Translation file
