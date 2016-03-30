@@ -1,2 +1,2 @@
-- Make everything IP-Based
+- Make everything IP-Based and after that ClientId for WarnPoints allocation and for Ban IP+ClientID
 - Language Translation
