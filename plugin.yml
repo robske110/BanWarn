@@ -1,8 +1,8 @@
-name: WarnBan
+name: BanWarn
 api: [1.13.0]
 version: 1.1.0-InDev-alpha3
 load: POSTWORLD
-main: robske_110\WarnBan\Main
+main: robske_110\BanWarn\Main
 author: robske_110
 website: https://github.com/robske110/BanWarn
 
