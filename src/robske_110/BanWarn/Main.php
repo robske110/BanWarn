@@ -6,6 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
@@ -13,6 +14,7 @@ use pocketmine\utils\TextFormat as TF;
 class Main extends PluginBase implements Listener
 {
     public $warnsys;
+    public $clientBan;
     public $config;
 
     public function onEnable()
@@ -21,6 +23,8 @@ class Main extends PluginBase implements Listener
         @mkdir($this->getDataFolder());
         $this->warnsys = new Config($this->getDataFolder() . "warnsys.yml", Config::YAML, array());
         $this->warnsys->save();
+        $this->clientBan = new Config($this->getDataFolder() . "clientBan.yml", Config::YAML, array());
+        $this->clientBan->save();
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
         if($this->config->get("ConfigVersion") != 1){
             $this->config->set('max-warns-until-ban', 10);
@@ -28,6 +32,26 @@ class Main extends PluginBase implements Listener
         }
         $this->config->save();
     }
+    
+    public function onPreJoin(PlayerPreLoginEvent $event){
+        $playerID = $event->getPlayer()->getClientId();
+        foreach($this->clientBan->getAll() as $rawPlayerID){
+            if($playerID == $rawPlayerId){
+                $reason = "";
+                $Index = 0;
+                foreach($this->warnsys->get($playerID); as $playerData)
+                {
+                    if($Index != 0){
+                        $reason = $reason.TF::GREEN."Warnung ".TF::WHITE.$Index.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                    }
+                    $Index++;
+                }
+                $reason = "Du wurdest gebannt: \n\n\n\n\n".$reason;
+                $event->getPlayer()->kick($reason, false);
+            }
+        }
+    }
+    
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 		switch($command->getName())
         {
@@ -80,7 +104,7 @@ class Main extends PluginBase implements Listener
                     		    $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
                             //IP_Ban
                             //Client-Ban
-                            //TODO
+                            $this->clientBan->add($playerName, $playerID);
                             //Client-Ban
                         }
                     }
