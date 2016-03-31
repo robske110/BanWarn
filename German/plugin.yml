@@ -1,5 +1,5 @@
 name: BanWarn
-api: [1.13.0]
+api: [1.13.0, 2.0.0]
 version: 1.1.0-InDev-beta1
 load: POSTWORLD
 main: robske_110\BanWarn\Main
@@ -19,8 +19,8 @@ commands:
 
 permissions:
  ServerCore.command.warn:
-  description: "Allows the user to run the warn command"
+  description: "Erlaubt die benutzung des /warn Kommandos"
   default: op
 ServerCore.command.warninfo:
-  description: "Allows the user to run the warninfo command"
-  default: op
+  description: "Erlaubt die benutzung des /warninfo Kommandos"
+  default: true
