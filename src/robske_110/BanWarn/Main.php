@@ -36,17 +36,20 @@ class Main extends PluginBase implements Listener
     public function onPreJoin(PlayerPreLoginEvent $event){
         $playerID = $event->getPlayer()->getClientId();
         foreach($this->clientBan->getAll() as $rawPlayerID){
-            if($playerID == $rawPlayerId){
+            if($playerID == $rawPlayerID){
                 $reason = "";
                 $Index = 0;
                 foreach($this->warnsys->get($playerID) as $playerData)
                 {
                     if($Index != 0){
-                        $reason = $reason.TF::GREEN."Warnung ".TF::WHITE.$Index.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                        $reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                    }
+                    if($Index == 1){
+                        $reason = $reason."\n\n\n";
                     }
                     $Index++;
                 }
-                $reason = "Du wurdest gebannt: \n\n\n\n\n".$reason;
+                $reason = "Du wurdest gebannt: \n".$reason;
                 $event->getPlayer()->kick($reason, false);
             }
         }
@@ -62,11 +65,11 @@ class Main extends PluginBase implements Listener
                 {
                     if($this->getServer()->getPlayer($args[0]) instanceof Player)
                     {
-                        $this->addOnlineWarn($args);
+                        $this->addOnlineWarn($args, $sender);
                     }
                     else
                     {
-                        $this->addOfflineWarn($args);
+                        $this->addOfflineWarn($args, $sender);
                     }
                 }
                 else
@@ -76,11 +79,11 @@ class Main extends PluginBase implements Listener
                 $args[2] = 1;
                 if($this->getServer()->getPlayer($args[0]) instanceof Player)
                 {
-                    $this->addOnlineWarn($args);
+                    $this->addOnlineWarn($args, $sender);
                 }
                 else
                 {
-                    $this->addOfflineWarn($args);
+                    $this->addOfflineWarn($args, $sender);
                 }
             }else{return false;}   
         return true;
@@ -123,7 +126,7 @@ class Main extends PluginBase implements Listener
         return true;
         }
     }
-    private function addOnlineWarn($args){
+    private function addOnlineWarn($args, $sender){
         $playerName = $this->getServer()->getPlayer($args[0])->getName();
         $playerID = $this->getServer()->getPlayer($args[0])->getClientId();
         $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings
@@ -150,11 +153,14 @@ class Main extends PluginBase implements Listener
             foreach($tempStuffArray as $playerData)
             {
                 if($Index != 0){
-                    $reason = $reason.TF::GREEN."Warnung ".TF::WHITE.$Index.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                    $reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Grund: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                }
+                if($Index == 1){
+                    $reason = $reason."\n\n\n";
                 }
                 $Index++;
             }
-            $reason = "Du wurdest gebannt: \n\n\n\n\n".$reason;
+            $reason = "Du wurdest gebannt: \n".$reason;
             //IP_Ban
             $ip = $this->getServer()->getPlayer($args[0])->getAddress();
     		foreach($this->getServer()->getOnlinePlayers() as $player){
@@ -165,10 +171,11 @@ class Main extends PluginBase implements Listener
     		 $sender->getServer()->getNetwork()->blockAddress($ip, -1);
     		 $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
              //Client-Ban
-             $this->clientBan->add($playerName, $playerID);
+             $this->clientBan->set($playerName, $playerID);
+             $this->clientBan->save();
         }
     }
-    private function addOfflineWarn($args){
+    private function addOfflineWarn($args, $sender){
         $playerName = $args[0];
         $playerID = $this->getWarnPlayerByName($playerName);
         if($playerID != NULL){
