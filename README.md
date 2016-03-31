@@ -1,6 +1,6 @@
 # BanWarn
 
-####Version 1.1-0 is stable to use and recommendend for all 1.0.X users! [**OFFICAL RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.1.0)
+####Version 1.1.0 is **stable** to use and recommendend for all 1.0.X users! [**OFFICAL RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.1.0)
 
 #####Look in issue https://github.com/robske110/BanWarn/issues/1 for detailed info and Changelogs for 1.1.0 and 1.2.0!
 
