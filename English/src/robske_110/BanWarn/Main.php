@@ -26,15 +26,46 @@ class Main extends PluginBase implements Listener
         $this->clientBan = new Config($this->getDataFolder() . "clientBan.yml", Config::YAML, array());
         $this->clientBan->save();
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
-        if($this->config->get("ConfigVersion") != 1){
-            $this->config->set('max-warns-until-ban', 10);
-            $this->config->set('ConfigVersion', 1);
+        if($this->config->get("ConfigVersion") != 2){
+            $this->config->set('max-points-until-ban', 10);
+            $this->config->set('IP-Ban', true);
+            $this->config->set('Client-Ban', true);
+            $this->config->set('ConfigVersion', 2);
         }
         $this->config->save();
     }
     
     public function onPreJoin(PlayerPreLoginEvent $event){
         $playerID = $event->getPlayer()->getClientId();
+        if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
+            $reason = "";
+            $tempStuffArray = $this->warnsys->get($playerID);
+            $Index = 0;
+            foreach($tempStuffArray as $playerData)
+            {
+                if($Index != 0){
+                    $reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                }
+                if($Index == 1){
+                    $reason = $reason."\n\n\n";
+                }
+                $Index++;
+            }
+            $reason = "You are banned: \n".$reason; //TODO::Translate
+            //IP_Ban
+            $ip = $this->getServer()->getPlayer($args[0])->getAddress();
+    		foreach($this->getServer()->getOnlinePlayers() as $player){
+    	        if($player->getAddress() === $ip){
+    		        $player->kick($reason, false);
+    			}
+    		 }
+    		 $sender->getServer()->getNetwork()->blockAddress($ip, -1);
+    		 $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
+             //Client-Ban
+             $this->clientBan->set($playerName, $playerID);
+             $this->clientBan->save();
+        }
+        
         foreach($this->clientBan->getAll() as $rawPlayerID){
             if($playerID == $rawPlayerID){
                 $reason = "";
@@ -160,7 +191,7 @@ class Main extends PluginBase implements Listener
                 }
                 $Index++;
             }
-            $reason = "You are banned: \n".$reason;
+            $reason = "You are banned: \n".$reason; //TODO::Translate
             //IP_Ban
             $ip = $this->getServer()->getPlayer($args[0])->getAddress();
     		foreach($this->getServer()->getOnlinePlayers() as $player){
@@ -195,12 +226,12 @@ class Main extends PluginBase implements Listener
               $this->getServer()->getLogger()->info($tempMsgS);
           }
           if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
-              $this->sendMsgToSender($sender, TF::RED."You have to ban '".TF::DARK_GRAY.$playerName.TF::RED."' by yourself, because he is not online!"); //TODO::Translate //TODO::FixThis (AutoBan on join if over CONFIG::max points)
+              $this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' will be banned on his next login!"); //TODO::Translate
           }
         }
         else
         {
-          $this->sendMsgToSender($sender, TF::RED."Unfortunaly '".TF::DARK_GRAY.$playerName.TF::RED."' could not be warned, as he is not online and has no prevoius warnings!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
+          $this->sendMsgToSender($sender, TF::RED."Unfortunaly '".TF::DARK_GRAY.$playerName.TF::RED."' could not be warned, as he is not online and has no prevoius warnings!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe (WaitingForPM)? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
         }
     }
     private function sendMsgToSender($sender, $message){
