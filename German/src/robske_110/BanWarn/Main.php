@@ -227,7 +227,7 @@ class Main extends PluginBase implements Listener
             $this->clientBan->save();
         }
     }
-    private function ipBan($ip){
+    private function ipBan($ip, $reason){
         if($this->config->get("IP-Ban") == true){
     		foreach($this->getServer()->getOnlinePlayers() as $player){
     	        if($player->getAddress() === $ip){
