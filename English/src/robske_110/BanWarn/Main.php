@@ -36,36 +36,8 @@ class Main extends PluginBase implements Listener
     }
     
     public function onPreJoin(PlayerPreLoginEvent $event){
+        $isAlreadyBanned = false;
         $playerID = $event->getPlayer()->getClientId();
-        if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
-            $reason = "";
-            $tempStuffArray = $this->warnsys->get($playerID);
-            $Index = 0;
-            foreach($tempStuffArray as $playerData)
-            {
-                if($Index != 0){
-                    $reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
-                }
-                if($Index == 1){
-                    $reason = $reason."\n\n\n";
-                }
-                $Index++;
-            }
-            $reason = "You are banned: \n".$reason; //TODO::Translate
-            //IP_Ban
-            $ip = $this->getServer()->getPlayer($args[0])->getAddress();
-    		foreach($this->getServer()->getOnlinePlayers() as $player){
-    	        if($player->getAddress() === $ip){
-    		        $player->kick($reason, false);
-    			}
-    		 }
-    		 $sender->getServer()->getNetwork()->blockAddress($ip, -1);
-    		 $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
-             //Client-Ban
-             $this->clientBan->set($playerName, $playerID);
-             $this->clientBan->save();
-        }
-        
         foreach($this->clientBan->getAll() as $rawPlayerID){
             if($playerID == $rawPlayerID){
                 $reason = "";
@@ -82,7 +54,29 @@ class Main extends PluginBase implements Listener
                 }
                 $reason = "You are banned: \n".$reason;
                 $event->getPlayer()->kick($reason, false);
+                $isAlreadyBanned = true;
             }
+        }
+        if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban") && !$isAlreadyBanned){
+            $reason = "";
+            $tempStuffArray = $this->warnsys->get($playerID);
+            $Index = 0;
+            foreach($tempStuffArray as $playerData)
+            {
+                if($Index != 0){
+                    $reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+                }
+                if($Index == 1){
+                    $reason = $reason."\n\n\n";
+                }
+                $Index++;
+            }
+            $reason = "You are banned: \n".$reason; //TODO::Translate
+            //IP_Ban
+            $ip = $this->getServer()->getPlayer($args[0])->getAddress();
+            $this->banIP($ip, $reason);
+            //Client-Ban
+            $this->banClient($playerName, $playerID);
         }
     }
     
@@ -194,16 +188,9 @@ class Main extends PluginBase implements Listener
             $reason = "You are banned: \n".$reason; //TODO::Translate
             //IP_Ban
             $ip = $this->getServer()->getPlayer($args[0])->getAddress();
-    		foreach($this->getServer()->getOnlinePlayers() as $player){
-    	        if($player->getAddress() === $ip){
-    		        $player->kick($reason, false);
-    			}
-    		 }
-    		 $sender->getServer()->getNetwork()->blockAddress($ip, -1);
-    		 $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
-             //Client-Ban
-             $this->clientBan->set($playerName, $playerID);
-             $this->clientBan->save();
+            $this->banIP($ip, $reason);
+            //Client-Ban
+            $this->banClient($playerName, $playerID);
         }
     }
     private function addOfflineWarn($args, $sender){
@@ -232,6 +219,23 @@ class Main extends PluginBase implements Listener
         else
         {
           $this->sendMsgToSender($sender, TF::RED."Unfortunaly '".TF::DARK_GRAY.$playerName.TF::RED."' could not be warned, as he is not online and has no prevoius warnings!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe (WaitingForPM)? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
+        }
+    }
+    private function clientBan($playerName, $clientID){
+        if($this->config->get("Client-Ban") == true){
+            $this->clientBan->set($playerName, $playerID);
+            $this->clientBan->save();
+        }
+    }
+    private function ipBan($ip){
+        if($this->config->get("IP-Ban") == true){
+    		foreach($this->getServer()->getOnlinePlayers() as $player){
+    	        if($player->getAddress() === $ip){
+    		        $player->kick($reason, false);
+    			}
+    		 }
+    		 $sender->getServer()->getNetwork()->blockAddress($ip, -1);
+    		 $this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan", null, $sender->getName());
         }
     }
     private function sendMsgToSender($sender, $message){
