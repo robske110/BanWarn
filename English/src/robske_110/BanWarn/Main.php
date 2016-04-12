@@ -11,14 +11,12 @@ use pocketmine\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 
-class Main extends PluginBase implements Listener
-{
+class Main extends PluginBase implements Listener{
     public $warnsys;
     public $clientBan;
     public $config;
 
-    public function onEnable()
-    {
+    public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         @mkdir($this->getDataFolder());
         $this->warnsys = new Config($this->getDataFolder() . "warnsys.yml", Config::YAML, array());
@@ -81,53 +79,38 @@ class Main extends PluginBase implements Listener
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
-		switch($command->getName())
-        {
+		switch($command->getName()){
             case "warn":
-            if(isset($args[2]))
-            {
-                if(ctype_digit($args[2]))
-                {
-                    if($this->getServer()->getPlayer($args[0]) instanceof Player)
-                    {
+            if(isset($args[2])){
+                if(ctype_digit($args[2])){
+                    if($this->getServer()->getPlayer($args[0]) instanceof Player){
                         $this->addOnlineWarn($args, $sender);
-                    }
-                    else
-                    {
+                    }else{
                         $this->addOfflineWarn($args, $sender);
                     }
                 }
                 else
                 {return false;}   
-            }
-            elseif(isset($args[1])){
+            }elseif(isset($args[1])){
                 $args[2] = 1;
-                if($this->getServer()->getPlayer($args[0]) instanceof Player)
-                {
+                if($this->getServer()->getPlayer($args[0]) instanceof Player){
                     $this->addOnlineWarn($args, $sender);
-                }
-                else
-                {
+                }else{
                     $this->addOfflineWarn($args, $sender);
                 }
             }else{return false;}   
         return true;
         break; 
         case "warninfo":
-        if(isset($args[0]))
-        {
-            if($this->getServer()->getPlayer($args[0]) instanceof Player)
-            {
+        if(isset($args[0])){
+            if($this->getServer()->getPlayer($args[0]) instanceof Player){
                 $playerName = $this->getServer()->getPlayer($args[0])->getName();
                 $playerID = $this->getServer()->getPlayer($args[0])->getClientID();
-            }
-            else
-            {
+            }else{
                 $playerName = $args[0];
                 $playerID = $this->getWarnPlayerByName($playerName);
             }
-            if($this->warnsys->exists($playerID))
-            {
+            if($this->warnsys->exists($playerID)){
                 $this->sendMsgToSender($sender, TF::GREEN."Warnings for the player '".TF::DARK_GRAY.$playerName.TF::GREEN."', who has ".$this->countWPoints($playerID)." Points:"); //TODO::Translate
                 $Index = 0;
                 $tempStuffArray = $this->warnsys->get($playerID);
@@ -140,9 +123,7 @@ class Main extends PluginBase implements Listener
                   }
                   $Index++;
                 }
-            }
-            else
-            {
+            }else{
                 $this->sendMsgToSender($sender, TF::RED."There are no warnings for the player '".TF::DARK_GRAY.$playerName.TF::RED."'!"); //TODO::Translate
             }
         }
@@ -154,7 +135,7 @@ class Main extends PluginBase implements Listener
     private function addOnlineWarn($args, $sender){
         $playerName = $this->getServer()->getPlayer($args[0])->getName();
         $playerID = $this->getServer()->getPlayer($args[0])->getClientId();
-        $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings
+        $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings #FunFact this is the only line written by someone else @PEMapModder :)
         $Index = count($array);
         if($Index == 0){
           $array[0] = ["RealPlayerName" => $playerName, "RealClientID" => $playerID];
@@ -167,8 +148,7 @@ class Main extends PluginBase implements Listener
         $tempMsgToP = TF::RED . "YOU HAVE BEEN WARNED BY '".$sender->getName()."' WITH THE REASON '".TF::DARK_GRAY.$args[1].TF::RED."' and ".TF::DARK_GRAY.$args[2].TF::RED." POINTS! YOU NOW HAVE A TOTAL OF".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." POINTS! WITH ".TF::DARK_GRAY.$this->config->get("max-warns-until-ban").TF::RED." POINTS YOU'LL BE BANNED!"; //TODO::Translate
         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
         $this->sendMsgToSender($sender, $tempMsgS);
-        if($this->getTypeAsNameOfSender($sender) != "CONSOLE")
-        {
+        if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
             $this->getServer()->getLogger()->info($tempMsgS);
         }
         if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
@@ -208,16 +188,13 @@ class Main extends PluginBase implements Listener
           $this->warnsys->save();
           $tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." Point(s)! He now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Points."; //TODO::Translate
           $this->sendMsgToSender($sender, $tempMsgS);
-          if($this->getTypeAsNameOfSender($sender) != "CONSOLE")
-          {
+          if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
               $this->getServer()->getLogger()->info($tempMsgS);
           }
           if($this->countWPoints($playerID) >= $this->config->get("max-warns-until-ban")){
               $this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' will be banned on his next login!"); //TODO::Translate
           }
-        }
-        else
-        {
+        }else{
           $this->sendMsgToSender($sender, TF::RED."Unfortunaly '".TF::DARK_GRAY.$playerName.TF::RED."' could not be warned, as he is not online and has no prevoius warnings!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe (WaitingForPM)? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
         }
     }
@@ -239,12 +216,9 @@ class Main extends PluginBase implements Listener
         }
     }
     private function sendMsgToSender($sender, $message){
-        if($sender instanceof Player)
-        {
+        if($sender instanceof Player){
             $sender->getPlayer()->sendMessage($message);
-        }
-        else
-        {
+        }else{
             $this->getServer()->getLogger()->info("[WarnBan] ".$message);
         }
     }
@@ -262,12 +236,9 @@ class Main extends PluginBase implements Listener
         return $count;
     }
     private function getTypeAsNameOfSender($sender){
-        if($sender instanceof Player)
-        {
+        if($sender instanceof Player){
             $NAME = $sender->getPlayer()->getName();
-        }
-        else
-        {
+        }else{
             $NAME = "CONSOLE";
         }
         return $NAME;
