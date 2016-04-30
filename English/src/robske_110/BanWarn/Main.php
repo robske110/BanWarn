@@ -33,7 +33,7 @@ class Main extends PluginBase implements Listener{
         $this->config->save();
     }
     
-    public function onPreJoin(PlayerPreLoginEvent $event){
+    public function onJoin(PlayerLoginEvent $event){
         $isAlreadyBanned = false;
         $playerID = $event->getPlayer()->getClientId();
         foreach($this->clientBan->getAll() as $rawPlayerID){
@@ -198,6 +198,7 @@ class Main extends PluginBase implements Listener{
           $this->sendMsgToSender($sender, TF::RED."Unfortunaly '".TF::DARK_GRAY.$playerName.TF::RED."' could not be warned, as he is not online and has no prevoius warnings!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe (WaitingForPM)? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
         }
     }
+    //private function removeLastWarn($playerName, $clientID, $ALL)
     private function clientBan($playerName, $clientID){
         if($this->config->get("Client-Ban") == true){
             $this->clientBan->set($playerName, $playerID);
