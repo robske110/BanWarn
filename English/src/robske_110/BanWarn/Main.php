@@ -144,8 +144,9 @@ class Main extends PluginBase implements Listener{
         $array[$Index] = [$args[1], $args[2]];
         $this->warnsys->set($playerID, $array);
         $this->warnsys->save();
-        $tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." Point(s)! He now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Points."; //TODO::Translate
-        $tempMsgToP = TF::RED . "YOU HAVE BEEN WARNED BY '".$sender->getName()."' WITH THE REASON '".TF::DARK_GRAY.$args[1].TF::RED."' and ".TF::DARK_GRAY.$args[2].TF::RED." POINTS! YOU NOW HAVE A TOTAL OF".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." POINTS! WITH ".TF::DARK_GRAY.$this->config->get("max-warns-until-ban").TF::RED." POINTS YOU'LL BE BANNED!"; //TODO::Translate
+        $tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." point(s)! They now have a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." point(s)."; //TODO::Translate
+        $tempMsgToP = TF::RED . "YOU HAVE BEEN WARNED BY '".$sender->getName()."' WITH THE REASON '".TF::DARK_GRAY.$args[1].TF::RED."' and ".TF::DARK_GRAY.$args[2].TF::RED." POINT(S)! YOU NOW HAVE A TOTAL OF".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." POINT(S)! WITH ".TF::DARK_GRAY.$this->config->get("max-warns-until-ban").TF::RED." POINTS YOU WILL BE BANNED!"; //TODO::Translate
+        $this->getServer()->broadcastMessage(TF::GREEN.$playerName.TF::YELLOW." has been warned for '".TF::GREEN.$args[1].TF::YELLOW."' and ".TF::GREEN.$args[2].TF::YELLOW." point(s)");
         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
         $this->sendMsgToSender($sender, $tempMsgS);
         if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
