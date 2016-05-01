@@ -6,7 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\player\PlayerPreLoginEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
@@ -33,7 +33,7 @@ class Main extends PluginBase implements Listener{
         $this->config->save();
     }
     
-    public function onPreJoin(PlayerPreLoginEvent $event){
+    public function onJoin(PlayerLoginEvent $event){
         $isAlreadyBanned = false;
         $playerID = $event->getPlayer()->getClientId();
         foreach($this->clientBan->getAll() as $rawPlayerID){
@@ -79,7 +79,7 @@ class Main extends PluginBase implements Listener{
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
-		switch($command->getName()){
+	switch($command->getName()){
             case "warn":
             if(isset($args[2])){
                 if(ctype_digit($args[2])){
@@ -146,6 +146,7 @@ class Main extends PluginBase implements Listener{
         $this->warnsys->save();
         $tempMsgS = TF::GREEN . "Der Spieler '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde mit dem Grund '".TF::DARK_GRAY.$args[1].TF::GREEN."' mit ".TF::DARK_GRAY.$args[2].TF::GREEN." Punkten gewarnt! Er hat insgesamt ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Punkte."; //TODO::Translate
         $tempMsgToP = TF::RED . "DU WURDEST VON '".$sender->getName()."' MIT DEM GRUND '".TF::DARK_GRAY.$args[1].TF::RED."' mit ".TF::DARK_GRAY.$args[2].TF::RED." PUNKTEN GEWARNT! DU HAST ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." PUNKTE! MIT ".TF::DARK_GRAY.$this->config->get("max-warns-until-ban").TF::RED." PUNKTEN WIRST DU GEBANNT!"; //TODO::Translate
+        $this->getServer()->broadcastMessage($tempMsgS); //TODO: Add config for this [Send only to ISSUER+CONSOLE+PLAYER or send to all]
         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
         $this->sendMsgToSender($sender, $tempMsgS);
         if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
@@ -198,6 +199,7 @@ class Main extends PluginBase implements Listener{
           $this->sendMsgToSender($sender, TF::RED."Leider konnte '".TF::DARK_GRAY.$playerName.TF::RED."' nicht gewarnt werden, da er nicht Online ist und keine bisherigen Warns hat!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe (WaitingForPM)? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
         }
     }
+    //private function removeLastWarn($playerName, $clientID, $ALL)
     private function clientBan($playerName, $clientID){
         if($this->config->get("Client-Ban") == true){
             $this->clientBan->set($playerName, $playerID);
