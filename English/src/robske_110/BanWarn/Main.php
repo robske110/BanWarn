@@ -6,7 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\player\PlayerPreLoginEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
