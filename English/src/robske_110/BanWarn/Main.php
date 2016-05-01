@@ -79,7 +79,7 @@ class Main extends PluginBase implements Listener{
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
-		switch($command->getName()){
+	switch($command->getName()){
             case "warn":
             if(isset($args[2])){
                 if(ctype_digit($args[2])){
@@ -144,9 +144,9 @@ class Main extends PluginBase implements Listener{
         $array[$Index] = [$args[1], $args[2]];
         $this->warnsys->set($playerID, $array);
         $this->warnsys->save();
-        $tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." point(s)! They now have a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." point(s)."; //TODO::Translate
+        $tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." point(s)! He now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." point(s)."; //TODO::Translate
         $tempMsgToP = TF::RED . "YOU HAVE BEEN WARNED BY '".$sender->getName()."' WITH THE REASON '".TF::DARK_GRAY.$args[1].TF::RED."' and ".TF::DARK_GRAY.$args[2].TF::RED." POINT(S)! YOU NOW HAVE A TOTAL OF".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." POINT(S)! WITH ".TF::DARK_GRAY.$this->config->get("max-warns-until-ban").TF::RED." POINTS YOU WILL BE BANNED!"; //TODO::Translate
-        $this->getServer()->broadcastMessage(TF::GREEN.$playerName.TF::YELLOW." has been warned for '".TF::GREEN.$args[1].TF::YELLOW."' and ".TF::GREEN.$args[2].TF::YELLOW." point(s)");
+        $this->getServer()->broadcastMessage($tempMsgS); //TODO: Add config for this [Send only to ISSUER+CONSOLE+PLAYER or send to all]
         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
         $this->sendMsgToSender($sender, $tempMsgS);
         if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
