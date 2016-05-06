@@ -199,35 +199,46 @@ class Main extends PluginBase implements Listener{
           $this->sendMsgToSender($sender, TF::RED."Unfortunaly '".TF::DARK_GRAY.$playerName.TF::RED."' could not be warned, as he is not online and has no prevoius warnings!"); //TODO::Translate //TODO::FixThis (By using player.dat maybe (WaitingForPM)? HEY, POCKETMINE:WHY ISN'T THERE AN EASY SOLOUTION FOR THIS!)
         }
     }
-	/*
     private function wipePlayer($playerName){
+		$remSuceededLvls = ["warnsys" => false, "clientBan" => false, ipBan => false];
 		$playerID = $this->getWarnPlayerByName($playerName);
-		$this->clientBan->remove($playerName);
-		$this->clientBan->save();
-		$this->warnsys->remove($playerID);
-		$this->warnsys->save();
-		foreach($this->getServer()->getIPBans() as $ipBanObject){
+		if($this->clientBan->exists($playerName)){
+			$remSuceededLvls["clientBan"] = true;
+			$this->clientBan->remove($playerName);
+			$this->clientBan->save();
+		}
+		if($this->warnsys->exists($playerID)){
+			$remSuceededLvls["warnsys"] = true;
+			$this->warnsys->remove($playerID);
+			$this->warnsys->save();
+		}
+		foreach($this->getServer()->getIPBans()->getEntries() as $ipBanObject){
 			if($ipBanObject->getReason() == "BanWarnPluginBan BannedPlayer:".$playerName){
-				$ip = $ipBanObject->getIP();
-				$ipBanObject->remove();
+				$ip = $ipBanObject->getName();
+				$this->getServer()->getIPBans()->remove($ip);
+				$remSuceededLvls["ipBan"] = true;
 			}
 		}
-    	$this->getServer()->getNetwork()->blockAddress($ip, -1); //UnBlock? Or Pardon? Or simply restart the server...
+		return $remSuceededLvls;
 	}
-	*/
 	/*
     private function removeLastWarn($playerName){
+		$remSuceededLvls = ["warnsys" => false, "clientBan" => false, ipBan => false];
 		$playerID = $this->getWarnPlayerByName($playerName);
-		$this->clientBan->remove($playerName);
-		$this->clientBan->save();
-		//TODO::OneWarnRemoval
-		foreach($this->getServer()->getIPBans() as $ipBanObject){
+		if($this->clientBan->exists($playerName)){
+			$remSuceededLvls["clientBan"] = true;
+			$this->clientBan->remove($playerName);
+			$this->clientBan->save();
+		}
+		//TODO::OneWarnRemoval #Code406
+		foreach($this->getServer()->getIPBans()->getEntries() as $ipBanObject){
 			if($ipBanObject->getReason() == "BanWarnPluginBan BannedPlayer:".$playerName){
-				$ip = $ipBanObject->getIP();
-				$ipBanObject->remove();
+				$ip = $ipBanObject->getName();
+				$this->getServer()->getIPBans()->remove($ip);
+				$remSuceededLvls["ipBan"] = true;
 			}
 		}
-    	$this->getServer()->getNetwork()->blockAddress($ip, -1); //UnBlock? Or Pardon? Or simply restart the server...
+    	return $remSuceededLvls;
 	}
 	*/
     private function banClient($playerName, $clientID){
