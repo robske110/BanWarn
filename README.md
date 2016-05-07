@@ -2,7 +2,7 @@
 
 ####Version 1.1.0 is **stable** for production and recommended for all 1.0.X users! [**OFFICAL RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.1.0)
 
-####I need some testing for the Version 1.2.0-InDev_alpha5 [In the /Releases/1.2.X/AlPHAS:BETAS/ folder](https://github.com/robske110/BanWarn/tree/master/Releases/1.2.X/ALPHAS:BETAS)
+####I need some testing for the Version 1.2.0-InDev_alpha7 [In the /Releases/1.2.X/AlPHAS:BETAS/ folder](https://github.com/robske110/BanWarn/tree/master/Releases/1.2.X/ALPHAS:BETAS)
 
 #####Look in issue https://github.com/robske110/BanWarn/issues/1 for detailed info and Changelogs for 1.1.0 and 1.2.0!
 
