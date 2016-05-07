@@ -16,18 +16,19 @@ commands:
   usage: "/warninfo <PlayerName>"
   permission: BanWarn.command.warninfo
   aliases: [wi]
-# warnpardon
-#  description: Pardons an player or removes warns
-#  usage: "/warnpardon <PlayerName> <All/Last>"
-#  permission: BanWarn.command.warnpardon
+ warnpardon:
+  description: Wipes all warns of a player or removes single warns
+  usage: "/warnpardon <PlayerName>"
+  permission: BanWarn.command.warnpardon
+  aliases: [wp]
 
 permissions:
  BanWarn.command.warn:
-  description: "Allows the user to run the /warn command"
+  description: "Allows to run the /warn command"
   default: op
  BanWarn.command.warninfo:
-  description: "Allows the user to run the /warninfo command"
+  description: "Allows to run the /warninfo command"
   default: op
-# BanWarn.command.warnpardon:
-#  description: "Allows the user to run the /warninfo command"
-#  default: op
+ BanWarn.command.warnpardon:
+  description: "Allows to run the /warninfo command"
+  default: op

@@ -15,6 +15,7 @@ class Main extends PluginBase implements Listener{
     public $warnsys;
     public $clientBan;
     public $config;
+	public $tempWPpromptUsers;
 
     public function onEnable(){
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
@@ -78,6 +79,54 @@ class Main extends PluginBase implements Listener{
         }
     }
     
+	private function parseWPpromptMsg($msg, $playerName, $sender, $tWPUindex = NULL){
+		$doEnd = true;
+		if($msg == "abort"){
+			$this->sendMsgToSender($sender, TF::RED."Aborted the warnpardon prompt");	
+		}elseif($msg == "last"){
+			//TODO
+		}elseif($msg == "all"){
+			$wipeResult = $this->wipePlayer($playerName);
+			if($wipeResult["warnsys"] && $wipeResult["clientBan"]){
+				$this->sendMsgToSender($sender, TF::GREEN."All warns from ".TF::DARK_GRAY.$playerName.TF::GREEN."have been removed!");
+			}elseif($wipeResult["warnsys"] && $wipeResult["clientBan"] && $wipeResult["ipBan"]){
+				$this->sendMsgToSender($sender, TF::GREEN."All warns from ".TF::DARK_GRAY.$playerName.TF::GREEN."have been removed!");
+			}
+		}else{
+			$this->sendMsgToSender($sender, TF::GREEN."You are currently in the warnpardon propmt (Player:".TF::DARK_GRAY.$playerName.TF::GREEN.")");
+			$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'");
+			$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns.");
+			$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn.");
+			$doEnd = false;
+		}
+		return $doEnd;
+	}
+	
+	public function onChat(PlayerChatEvent $event){
+		if($this->$tempWPUsers[$event->getPlayer->getName()] != NULL){
+			$msg = strtolower($event->getMessage());
+			$sender = $event->getSender();
+			$playerName = $this->$tempWPUsers[$event->getPlayer->getName()];
+			$event->setCancelled(true);
+			if($this->parseWPpromptMsg($msg, $playerName, $sender) == true){
+				$this->$tempWPUsers[$event->getPlayer->getName()] = NULL;
+			}
+		}
+	}
+	
+	public function onConsoleChat(PlayerChatEvent $event){
+		if($this->$tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] != NULL){
+			$msg = strtolower($event->getCommand()); 
+			$msg = substr($msg, 1);
+			$sender = $event->getSender();
+			$event->setCancelled(true);
+			$playerName = $this->$tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"];
+			if($this->parseWPpromptMsg($msg, $playerName, $sender) == true){
+				$this->$tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] = NULL;
+			}
+		}
+	}
+	
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
 	switch($command->getName()){
             case "warn":
@@ -127,10 +176,25 @@ class Main extends PluginBase implements Listener{
                 $this->sendMsgToSender($sender, TF::RED."There are no warnings for the player '".TF::DARK_GRAY.$playerName.TF::RED."'!"); //TODO::Translate
             }
         }
-        else
+		else
         {return false;}  
         return true;
         }
+		case "warnpardon":
+		if(isset($args[0])){
+			if($sender instanceof Player){
+				$this->tempWPusers[$sender->getName()] = $args[0];
+			}else{
+				$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = $args[0]; //So it won't conflict with player names
+			}
+			$this->sendMsgToSender($sender, TF::GREEN."You are going to remove one warn or wipe all warns from the Player ".TF::DARK_GRAY.$args[0]);
+			$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'");
+			$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns.");
+			$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn.");
+		}
+		else
+		{return false;}
+		return true;
     }
     private function addOnlineWarn($args, $sender){
         $playerName = $this->getServer()->getPlayer($args[0])->getName();
@@ -200,7 +264,7 @@ class Main extends PluginBase implements Listener{
         }
     }
     private function wipePlayer($playerName){
-		$remSuceededLvls = ["warnsys" => false, "clientBan" => false, ipBan => false];
+		$remSuceededLvls = ["warnsys" => false, "clientBan" => false, "ipBan" => false];
 		$playerID = $this->getWarnPlayerByName($playerName);
 		if($this->clientBan->exists($playerName)){
 			$remSuceededLvls["clientBan"] = true;
@@ -230,7 +294,7 @@ class Main extends PluginBase implements Listener{
 			$this->clientBan->remove($playerName);
 			$this->clientBan->save();
 		}
-		//TODO::OneWarnRemoval #Code406
+		//TODO::OneWarnRemoval
 		foreach($this->getServer()->getIPBans()->getEntries() as $ipBanObject){
 			if($ipBanObject->getReason() == "BanWarnPluginBan BannedPlayer:".$playerName){
 				$ip = $ipBanObject->getName();
