@@ -21,12 +21,12 @@
  Outputs info about the warnings an player has
  Usage: "/warninfo <PlayerName>"
  Permission: BanWarn.command.warninfo
- Alias: /wi
+ Alias: /wi /warni
   
  
 #####/warnpardon: //Since BanWarn1.2.0-InDev_alpha6
 
  Pardons an player or removes warns
- Usage: /warnpardon <PlayerName> <All/Last>
+ Usage: /warnpardon <PlayerName>
  Permission: BanWarn.command.warnpardon
- Alias: /wp
+ Alias: /wp /warnp
