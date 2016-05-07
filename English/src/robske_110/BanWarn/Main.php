@@ -81,23 +81,23 @@ class Main extends PluginBase implements Listener{
 	private function parseWPpromptMsg($msg, $playerName, $sender, $tWPUindex = NULL){
 		$doEnd = true;
 		if($msg == "abort"){
-			$this->sendMsgToSender($sender, TF::RED."Aborted the warnpardon prompt");	
+			$this->sendMsgToSender($sender, TF::RED."Aborted the warnpardon prompt"); //TODO::Translate
 		}elseif($msg == "last"){
 			//TODO
 		}elseif($msg == "all"){
 			$wipeResult = $this->wipePlayer($playerName);
 		    if($wipeResult["warnsys"] && $wipeResult["clientBan"] && $wipeResult["ipBan"]){
-			$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed! A server restart may be necassary");
+			$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed! A server restart may be necassary"); //TODO::Translate
             }elseif($wipeResult["warnsys"] && $wipeResult["clientBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed!");
+				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed!"); //TODO::Translate
 			}else{
-			    $this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!");
+			    $this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!"); //TODO::Translate
 			}
 		}else{
-			$this->sendMsgToSender($sender, TF::GREEN."You are currently in the warnpardon propmt (Player: '".TF::DARK_GRAY.$playerName.TF::GREEN."')");
-			$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'");
-			$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns.");
-			$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn.");
+			$this->sendMsgToSender($sender, TF::GREEN."You are currently in the warnpardon propmt (Player: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns."); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn."); //TODO::Translate
 			$doEnd = false;
 		}
 		return $doEnd;
@@ -107,7 +107,7 @@ class Main extends PluginBase implements Listener{
 		if($this->tempWPUsers[$event->getPlayer->getName()] != NULL){
 			$msg = strtolower($event->getMessage());
 			$sender = $event->getSender();
-			$playerName = $this->tempWPUsers[$event->getPlayer->getName()];
+			$playerName = strtolower($this->tempWPUsers[$event->getPlayer->getName()]);
 			$event->setCancelled(true);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender) == true){
 				$this->tempWPUsers[$event->getPlayer->getName()] = NULL;
@@ -120,7 +120,7 @@ class Main extends PluginBase implements Listener{
 			$msg = strtolower($event->getCommand());
 			$sender = $event->getSender();
 			$event->setCancelled(true);
-			$playerName = $this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"];
+			$playerName = strtolower($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"]);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender) == true){
 				$this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] = NULL;
 			}
@@ -153,10 +153,10 @@ class Main extends PluginBase implements Listener{
         case "warninfo":
             if(isset($args[0])){
             	if($this->getServer()->getPlayer($args[0]) instanceof Player){
-                	$playerName = $this->getServer()->getPlayer($args[0])->getName();
+                	$playerName = strtolower($this->getServer()->getPlayer($args[0])->getName());
                 	$playerID = $this->getServer()->getPlayer($args[0])->getClientID();
 				}else{
-                	$playerName = $args[0];
+                	strtolower($playerName = $args[0]);
                 	$playerID = $this->getWarnPlayerByName($playerName);
             	}
             	if($this->warnsys->exists($playerID)){
@@ -193,8 +193,9 @@ class Main extends PluginBase implements Listener{
 			return true;
     }
 	}
+	
     private function addOnlineWarn($args, $sender){
-        $playerName = $this->getServer()->getPlayer($args[0])->getName();
+        $playerName = strtolower($this->getServer()->getPlayer($args[0])->getName());
         $playerID = $this->getServer()->getPlayer($args[0])->getClientId();
         $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings #FunFact this is the only line written by someone else @PEMapModder :)
         $Index = count($array);
@@ -207,7 +208,7 @@ class Main extends PluginBase implements Listener{
         $this->warnsys->save();
         $tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." point(s)! He/she now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." point(s)."; //TODO::Translate
         $tempMsgToP = TF::RED . "YOU HAVE BEEN WARNED BY '".$sender->getName()."' WITH THE REASON '".TF::DARK_GRAY.$args[1].TF::RED."' and ".TF::DARK_GRAY.$args[2].TF::RED." POINT(S)! YOU NOW HAVE A TOTAL OF ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." POINT(S)! WITH ".TF::DARK_GRAY.$this->config->get("max-points-until-ban").TF::RED." POINTS YOU WILL BE BANNED!"; //TODO::Translate
-        //$this->getServer()->broadcastMessage($tempMsgS); //TODO: Add config for this [Send only to ISSUER+CONSOLE+PLAYER or send to all]
+        //$this->getServer()->broadcastMessage($tempMsgS); //TODO::Add config for this [Send only to ISSUER+CONSOLE+PLAYER or send to all]
         $this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
         $this->sendMsgToSender($sender, $tempMsgS);
         if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
@@ -233,7 +234,7 @@ class Main extends PluginBase implements Listener{
         }
     }
     private function addOfflineWarn($args, $sender){
-        $playerName = $args[0];
+        $playerName = strtolower($args[0]);
         $playerID = $this->getWarnPlayerByName($playerName);
         if($playerID != NULL){
           $array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings

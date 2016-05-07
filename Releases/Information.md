@@ -1,6 +1,9 @@
 All Releases will be posted here
 
-Version 1.2.0-InDev_alpha5 is semi-stable and needs testing! [In the /1.2.X/AlPHAS:BETAS/ folder]
+Version 1.2.0-InDev_alpha5 is not stable! [In the /1.2.X/AlPHAS:BETAS/ folder] For users, wich used this version it is highly recommened to upgrade to alpha7 or beta versions
+
+Version 1.2.0-InDev_alpha7 is semi-stable and needs testing! [In the /1.2.X/AlPHAS:BETAS/ folder]
+Any other versions of 1.2.0 (except the betas) are highly unstable and should not be continued to be used
 
 ####Old/Legacy-Versions:
 Version 1.0.1 and 1.0.2 are stable to use, but not recommended. [**Old** Versions]

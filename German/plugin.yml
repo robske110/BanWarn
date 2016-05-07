@@ -1,6 +1,6 @@
 name: BanWarn
 api: [1.13.0, 2.0.0]
-version: 1.2.0-InDev-alpha4
+version: 1.2.0-InDev-beta1
 load: POSTWORLD
 main: robske_110\BanWarn\Main
 author: robske_110
@@ -14,8 +14,13 @@ commands:
  warninfo:
   description: Gibt Infos über die Warnungspunkte eines Spielers und die Gründe
   usage: "/warninfo <SpielerName>"
-  permission: ServerCore.command.warninfo
-  aliases: [wi]
+  permission: BanWarn.command.warninfo
+  aliases: [wi, warni]
+ warnpardon:
+  description: Löscht alle Warnungen eines Spielers oder entfernt einzelne
+  usage: "/warnpardon <PlayerName>"
+  permission: BanWarn.command.warnpardon
+  aliases: [wp, warnp]
 
 permissions:
  ServerCore.command.warn:
@@ -24,3 +29,6 @@ permissions:
 ServerCore.command.warninfo:
   description: "Erlaubt die benutzung des /warninfo Kommandos"
   default: true
+ BanWarn.command.warnpardon:
+  description: "Erlaubt die benutzung des /warnpardon Kommandos"
+  default: op
