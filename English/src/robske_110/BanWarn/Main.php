@@ -104,13 +104,13 @@ class Main extends PluginBase implements Listener{
 	}
 	
 	public function onChat(PlayerChatEvent $event){
-		if($this->tempWPUsers[$event->getPlayer->getName()] != NULL){
+		if($this->tempWPUsers[$event->getPlayer()->getName()] != NULL){
 			$msg = strtolower($event->getMessage());
 			$sender = $event->getSender();
 			$playerName = strtolower($this->tempWPUsers[$event->getPlayer->getName()]);
 			$event->setCancelled(true);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender) == true){
-				$this->tempWPUsers[$event->getPlayer->getName()] = NULL;
+				$this->tempWPUsers[$event->getPlayer()->getName()] = NULL;
 			}
 		}
 	}
