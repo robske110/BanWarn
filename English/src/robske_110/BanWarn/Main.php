@@ -107,7 +107,7 @@ class Main extends PluginBase implements Listener{
 		if($this->tempWPUsers[$event->getPlayer()->getName()] != NULL){
 			$msg = strtolower($event->getMessage());
 			$sender = $event->getSender();
-			$playerName = strtolower($this->tempWPUsers[$event->getPlayer->getName()]);
+			$playerName = strtolower($this->tempWPUsers[$event->getPlayer()->getName()]);
 			$event->setCancelled(true);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender) == true){
 				$this->tempWPUsers[$event->getPlayer()->getName()] = NULL;

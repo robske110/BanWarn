@@ -1,6 +1,6 @@
 name: BanWarn
 api: [1.13.0, 2.0.0]
-version: 1.2.0-InDev-beta1
+version: 1.2.0-InDev-beta2_pre1
 load: POSTWORLD
 main: robske_110\BanWarn\Main
 author: robske_110
@@ -26,7 +26,7 @@ permissions:
  ServerCore.command.warn:
   description: "Erlaubt die benutzung des /warn Kommandos"
   default: op
-ServerCore.command.warninfo:
+ ServerCore.command.warninfo:
   description: "Erlaubt die benutzung des /warninfo Kommandos"
   default: true
  BanWarn.command.warnpardon:
