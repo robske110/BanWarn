@@ -11,14 +11,14 @@
 ###Commands:
 #####/warn:
 
- Warns an player
+ Warns a player
  Usage: /warn <PlayerName> <Reason> [Points]
  Permission: BanWarn.command.warn
  
  
 #####/warninfo:
 
- Outputs info about the warnings an player has
+ Outputs info about the warnings a player has
 
  Usage: "/warninfo <PlayerName>"
 
@@ -29,7 +29,7 @@
  
 #####/warnpardon: (1.2.0 only)
 
- Pardons an player or removes warns
+ Pardons a player or removes warns
 
  Usage: /warnpardon <PlayerName>
 
