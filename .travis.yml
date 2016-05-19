@@ -14,7 +14,7 @@ before_script:
  - cd plugins
  - mkdir BanWarn
  - cd BanWarn
- - git clone https://github.com/robske110/BanWarn/tree/master/English
+ - svn checkout https://github.com/foobar/Test/branches/master/English
  - pecl install channel://pecl.php.net/pthreads-2.0.10
  - pecl install channel://pecl.php.net/weakref-0.2.6
  - echo | pecl install channel://pecl.php.net/yaml-1.1.1
