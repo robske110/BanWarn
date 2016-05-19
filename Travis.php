@@ -1,5 +1,5 @@
 <?php
-$server = proc_open(PHP_BINARY . " src/pocketmine/PocketMine.php --no-wizard --disable-readline", [
+$server = proc_open(PHP_BINARY . " ClearSky/src/pocketmine/PocketMine.php --no-wizard --disable-readline", [
 	0 => ["pipe", "r"],
 	1 => ["pipe", "w"],
 	2 => ["pipe", "w"]
