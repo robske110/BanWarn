@@ -1,5 +1,7 @@
 # BanWarn
 
+**TravisCI Build Status** [![TravisCI](https://travis-ci.org/robske110/BanWarn/svg?branch=master)](https://travis-ci.org/robske110/BanWarn "TravisCI Build Status")
+
 ####Version 1.1.0 is **stable** for production and recommended for all 1.0.X users! [**OFFICAL RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.1.0)
 
 ####I need some testing for the Version 1.2.0-InDev_beta1 [**OFFICAL PRE-RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.2.0-InDev-beta1) (Formerly known as alpha7/8)
