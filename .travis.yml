@@ -9,6 +9,7 @@ branches:
  - master
 
 before_script:
+ - git clone --depth=50 --branch=master https://github.com/ClearSkyTeam/ClearSky.git
  - mkdir plugins
  - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.9.0/DevTools_v1.9.0.phar
  - cp -rf English/ plugins/
