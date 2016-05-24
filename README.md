@@ -1,6 +1,6 @@
 # BanWarn
 
-**TravisCI Build Status** [![TravisCI](https://travis-ci.org/robske110/BanWarn/svg?branch=master)](https://travis-ci.org/robske110/BanWarn "TravisCI Build Status")
+**TravisCI Build Status** [![TravisCI](https://api.travis-ci.org/robske110/BanWarn.svg?branch=master)](https://travis-ci.org/robske110/BanWarn)
 
 ####Version 1.1.0 is **stable** for production and recommended for all 1.0.X users! [**OFFICAL RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.1.0)
 
