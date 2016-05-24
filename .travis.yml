@@ -11,13 +11,16 @@ branches:
 before_script:
  - phpenv config-rm xdebug.ini
  - git clone --depth=50 --branch=master https://github.com/ClearSkyTeam/ClearSky.git
- - mkdir plugins
- - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.9.0/DevTools_v1.9.0.phar
- - cp -rf English/ plugins/
  - pecl install channel://pecl.php.net/pthreads-2.0.10
  - pecl install channel://pecl.php.net/weakref-0.2.6
  - echo | pecl install channel://pecl.php.net/yaml-1.1.1
+ - cd ClearSky
+ - mkdir plugins
+ - cd plugins
+ - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.9.0/DevTools_v1.9.0.phar
+ - cd /home/travis/build/robske110/BanWarn/
  - cp -rf Travis.php ClearSky/
+ - cp -rf English/ ClearSky/plugins/
  - cd ClearSky
 
 script:
