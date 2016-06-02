@@ -99,7 +99,7 @@ class Main extends PluginBase implements Listener{
 				$this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!"); //TODO::Translate
 			}
 		}else{
-			$this->sendMsgToSender($sender, TF::GREEN."You are currently in the warnpardon propmt (Player: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."You are currently in the warnpardon prompt (Player: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
 			$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'"); //TODO::Translate
 			$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns."); //TODO::Translate
 			$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn."); //TODO::Translate

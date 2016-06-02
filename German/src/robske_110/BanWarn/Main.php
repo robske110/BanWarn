@@ -79,30 +79,30 @@ class Main extends PluginBase implements Listener{
 	private function parseWPpromptMsg($msg, $playerName, $sender){
 		$doEnd = true;
 		if($msg == "abort"){
-			$this->sendMsgToSender($sender, TF::RED."Aborted the warnpardon prompt"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::RED."BanWarn Eingabemodus abgebrochen"); //TODO::Translate
 		}elseif($msg == "last"){
 			$remResult = $this->removeLastWarn($playerName);
 			if($remResult["warnsys"] && $remResult["clientBan"] && $remResult["ipBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed! A server restart may be necassary"); //TODO::Translate TODO::FixServerRestartNeed
+				$this->sendMsgToSender($sender, TF::GREEN."Die letzte Warnung von '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde entfernt! Ein Serverneustart könnte notwendig sein"); //TODO::Translate TODO::FixServerRestartNeed
 			}elseif($remResult["warnsys"] && $remResult["clientBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed!"); //TODO::Translate
+				$this->sendMsgToSender($sender, TF::GREEN."Die letzte Warnung von '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurde entfernt!"); //TODO::Translate
 			}else{
-				$this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!"); //TODO::Translate
+				$this->sendMsgToSender($sender, TF::RED."Der Spieler '".TF::DARK_GRAY.$playerName.TF::RED."' hat keine Warnungen!"); //TODO::Translate
 			}
 		}elseif($msg == "all"){
 			$wipeResult = $this->wipePlayer($playerName);
 			if($wipeResult["warnsys"] && $wipeResult["clientBan"] && $wipeResult["ipBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed! A server restart may be necassary"); //TODO::Translate TODO::FixServerRestartNeed
+				$this->sendMsgToSender($sender, TF::GREEN."Alle Warnungen von '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurden entfernt! Ein Serverneustart könnte notwendig sein"); //TODO::Translate TODO::FixServerRestartNeed
 			}elseif($wipeResult["warnsys"] && $wipeResult["clientBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed!"); //TODO::Translate
+				$this->sendMsgToSender($sender, TF::GREEN."Alle Warnungen von '".TF::DARK_GRAY.$playerName.TF::GREEN."' wurden entfernt!"); //TODO::Translate
 			}else{
-				$this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!"); //TODO::Translate
+				$this->sendMsgToSender($sender, TF::RED."Der Spieler '".TF::DARK_GRAY.$playerName.TF::RED."' hat keine Warnungen!"); //TODO::Translate
 			}
 		}else{
-			$this->sendMsgToSender($sender, TF::GREEN."You are currently in the warnpardon propmt (Player: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
-			$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'"); //TODO::Translate
-			$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns."); //TODO::Translate
-			$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn."); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Du bist momentan im BanWarn Eingabemodus (Spieler: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Falls du den Eingabemodus verlassen möchtest, gebe 'abort' ein"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Gebe 'all' ein, um die Warnungen von allen Spielern zu entfernen."); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Gebe 'last' ein, um die letzte Warnung zu entfernen."); //TODO::Translate
 			$doEnd = false;
 		}
 		return $doEnd;
@@ -187,10 +187,10 @@ class Main extends PluginBase implements Listener{
 				}else{
 					$this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] = $args[0]; //So it won't conflict with player names
 				}
-				$this->sendMsgToSender($sender, TF::GREEN."You are going to remove one warn or wipe all warns from the Player '".TF::DARK_GRAY.$args[0].TF::GREEN."'!");
-				$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'");
-				$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns.");
-				$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn.");
+				$this->sendMsgToSender($sender, TF::GREEN."Du bist kurz davor eine Warnung oder alle Warnungen des Spielers '".TF::DARK_GRAY.$args[0].TF::GREEN."' zu entfernen!");
+				$this->sendMsgToSender($sender, TF::GREEN."Falls du dies abbrechen möchtest, gebe 'abort' ein");
+				$this->sendMsgToSender($sender, TF::GREEN."Gebe 'all' ein, um alle Warnungen zu entfernen.");
+				$this->sendMsgToSender($sender, TF::GREEN."Gebe 'last' ein, um die letzte Warnung zu entfernen.");
 			}else{return false;}
 			return true;
 		}
