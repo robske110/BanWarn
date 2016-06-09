@@ -79,7 +79,7 @@ class Main extends PluginBase implements Listener{
 	private function parseWPpromptMsg($msg, $playerName, $sender){
 		$doEnd = true;
 		if($msg == "abort"){
-			$this->sendMsgToSender($sender, TF::RED."BanWarn Eingabemodus abgebrochen"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::RED."Das Warnpardon Kommando wurde abgebrochen"); //TODO::Translate
 		}elseif($msg == "last"){
 			$remResult = $this->removeLastWarn($playerName);
 			if($remResult["warnsys"] && $remResult["clientBan"] && $remResult["ipBan"]){
@@ -99,14 +99,15 @@ class Main extends PluginBase implements Listener{
 				$this->sendMsgToSender($sender, TF::RED."Der Spieler '".TF::DARK_GRAY.$playerName.TF::RED."' hat keine Warnungen!"); //TODO::Translate
 			}
 		}else{
-			$this->sendMsgToSender($sender, TF::GREEN."Du bist momentan im BanWarn Eingabemodus (Spieler: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
-			$this->sendMsgToSender($sender, TF::GREEN."Falls du den Eingabemodus verlassen möchtest, gebe 'abort' ein"); //TODO::Translate
-			$this->sendMsgToSender($sender, TF::GREEN."Gebe 'all' ein, um die Warnungen von allen Spielern zu entfernen."); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Du bist momentan im Warnpardon Kommando (Spieler: '".TF::DARK_GRAY.$playerName.TF::GREEN."')"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Falls du das Warnpardon Kommando verlassen möchtest, gebe 'abort' ein"); //TODO::Translate
+			$this->sendMsgToSender($sender, TF::GREEN."Gebe 'all' ein, um alle Warnungen zu entfernen."); //TODO::Translate
 			$this->sendMsgToSender($sender, TF::GREEN."Gebe 'last' ein, um die letzte Warnung zu entfernen."); //TODO::Translate
 			$doEnd = false;
 		}
 		return $doEnd;
 	}
+	
 	public function onChat(PlayerChatEvent $event){
 		if($this->tempWPUsers[$event->getPlayer()->getName()] != NULL){
 			$msg = strtolower($event->getMessage());
@@ -141,8 +142,7 @@ class Main extends PluginBase implements Listener{
 						$this->addOfflineWarn($args, $sender);
 					}
 				}
-				else
-					{return false;}   
+				else{return false;}   
 			}elseif(isset($args[1])){
 				$args[2] = 1;
 				if($this->getServer()->getPlayer($args[0]) instanceof Player){

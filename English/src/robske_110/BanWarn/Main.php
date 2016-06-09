@@ -142,8 +142,7 @@ class Main extends PluginBase implements Listener{
 						$this->addOfflineWarn($args, $sender);
 					}
 				}
-				else
-					{return false;}   
+				else{return false;}   
 			}elseif(isset($args[1])){
 				$args[2] = 1;
 				if($this->getServer()->getPlayer($args[0]) instanceof Player){
