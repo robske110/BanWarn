@@ -39,6 +39,7 @@ class Main extends PluginBase implements Listener{
 	public function onJoin(PlayerLoginEvent $event){
 		$isAlreadyBanned = false;
 		$playerID = $event->getPlayer()->getClientId();
+		$playerName = $event->getPlayer();
 		foreach($this->clientBan->getAll() as $rawPlayerID){
 			if($playerID == $rawPlayerID){
 				$reason = "";
@@ -69,7 +70,7 @@ class Main extends PluginBase implements Listener{
 			}
 			$reason = "You are banned: \n".$reason; //TODO::Translate
 			//IP_Ban
-			$ip = $this->getServer()->getPlayer($playerName)->getAddress();
+			$ip = $event->getPlayer()->getAddress();
 			$this->banIP($ip, $reason, $playerName);
 			//Client-Ban
 			$this->banClient($playerName, $playerID);
@@ -377,6 +378,10 @@ class Main extends PluginBase implements Listener{
 			}
 		}
 		return $playerID;
+	}
+
+	public function warnPlayer($playerName, $reason, $points){
+		//TODO
 	}
 }
 //Theory is when you know something, but it doesn't work. Practice is when something works, but you don't know why. Programmers combine theory and practice: Nothing works and they don't know why!
