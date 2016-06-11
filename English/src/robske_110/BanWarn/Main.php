@@ -69,7 +69,7 @@ class Main extends PluginBase implements Listener{
 			}
 			$reason = "You are banned: \n".$reason; //TODO::Translate
 			//IP_Ban
-			$ip = $this->getServer()->getPlayer($args[0])->getAddress();
+			$ip = $this->getServer()->getPlayer($playerName)->getAddress();
 			$this->banIP($ip, $reason, $playerName);
 			//Client-Ban
 			$this->banClient($playerName, $playerID);
