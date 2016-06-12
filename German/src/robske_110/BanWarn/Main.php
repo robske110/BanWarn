@@ -110,24 +110,24 @@ class Main extends PluginBase implements Listener{
 	}
 	
 	public function onChat(PlayerChatEvent $event){
-		if($this->tempWPUsers[$event->getPlayer()->getName()] != NULL){
+		if(isset($this->tempWPUsers[$event->getPlayer()->getName()])){
 			$msg = strtolower($event->getMessage());
 			$sender = $event->getSender();
 			$playerName = strtolower($this->tempWPUsers[$event->getPlayer()->getName()]);
 			$event->setCancelled(true);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender)){
-				$this->tempWPUsers[$event->getPlayer()->getName()] = NULL;
+				unset($this->tempWPUsers[$event->getPlayer()->getName()]);
 			}
 		}
 	}
 	public function onConsoleChat(ServerCommandEvent $event){
-		if($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] != NULL){
+		if(isset($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"])){
 			$msg = strtolower($event->getCommand());
 			$sender = $event->getSender();
 			$event->setCancelled(true);
 			$playerName = strtolower($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"]);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender)){
-				$this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] = NULL;
+				unset($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"]);
 			}
 		}
 	}
