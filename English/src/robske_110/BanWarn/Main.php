@@ -27,11 +27,12 @@ class Main extends PluginBase implements Listener{
 		$this->clientBan = new Config($this->getDataFolder() . "clientBan.yml", Config::YAML, array());
 		$this->clientBan->save();
 		$this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML, array());
-		if($this->config->get("ConfigVersion") != 2){
+		if($this->config->get("ConfigVersion") != 3){
 			$this->config->set('max-points-until-ban', 10);
 			$this->config->set('IP-Ban', true);
 			$this->config->set('Client-Ban', true);
-			$this->config->set('ConfigVersion', 2);
+			$this->config->set('Notify-Mode', 1);
+			$this->config->set('ConfigVersion', 3);
 		}
 		$this->config->save();
 	}
@@ -211,11 +212,14 @@ class Main extends PluginBase implements Listener{
 		$this->warnsys->save();
 		$tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." point(s)! He/she now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." point(s)."; //TODO::Translate
 		$tempMsgToP = TF::RED . "YOU HAVE BEEN WARNED BY '".$sender->getName()."' WITH THE REASON '".TF::DARK_GRAY.$args[1].TF::RED."' and ".TF::DARK_GRAY.$args[2].TF::RED." POINT(S)! YOU NOW HAVE A TOTAL OF ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::RED." POINT(S)! WITH ".TF::DARK_GRAY.$this->config->get("max-points-until-ban").TF::RED." POINTS YOU WILL BE BANNED!"; //TODO::Translate
-		//$this->getServer()->broadcastMessage($tempMsgS); //TODO::Add config for this [Send only to ISSUER+CONSOLE+PLAYER or send to all]
 		$this->getServer()->getPlayer($args[0])->sendMessage($tempMsgToP);
-		$this->sendMsgToSender($sender, $tempMsgS);
-		if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
-			$this->getServer()->getLogger()->info($tempMsgS);
+		if($this->config->get("Notify-Mode") == 1){
+			$this->sendMsgToSender($sender, $tempMsgS);
+			if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
+				$this->getServer()->getLogger()->info($tempMsgS);
+			}
+		}elseif($this->config->get("Notify-Mode") == 2){
+			$this->getServer()->broadcastMessage($tempMsgS);
 		}
 		if($this->countWPoints($playerID) >= $this->config->get("max-points-until-ban")){
 			$reason = "";
@@ -249,10 +253,13 @@ class Main extends PluginBase implements Listener{
 			$this->warnsys->set($playerID, $array);
 			$this->warnsys->save();
 			$tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." Point(s)! He now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Points."; //TODO::Translate
-			//$this->getServer()->broadcastMessage($tempMsgS); //TODO: Add config for this [Send only to ISSUER+CONSOLE+PLAYER or send to all]
-			$this->sendMsgToSender($sender, $tempMsgS);
-			if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
-				$this->getServer()->getLogger()->info($tempMsgS);
+			if($this->config->get("Notify-Mode") == 1){
+				$this->sendMsgToSender($sender, $tempMsgS);
+				if($this->getTypeAsNameOfSender($sender) != "CONSOLE"){
+					$this->getServer()->getLogger()->info($tempMsgS);
+				}
+			}elseif($this->config->get("Notify-Mode") == 2){
+				$this->getServer()->broadcastMessage($tempMsgS);
 			}
 			if($this->countWPoints($playerID) >= $this->config->get("max-points-until-ban")){
 				$this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' will be banned on his next login!"); //TODO::Translate
@@ -313,13 +320,13 @@ class Main extends PluginBase implements Listener{
 	}
 	
 	private function banClient($playerName, $playerID){
-		if($this->config->get("Client-Ban") == true){
+		if($this->config->get("Client-Ban")){
 			$this->clientBan->set($playerName, $playerID);
 			$this->clientBan->save();
 		}
 	}
 	private function banIP($ip, $reason, $playerName = "unknown", $issuer = "unknown"){
-		if($this->config->get("IP-Ban") == true){
+		if($this->config->get("IP-Ban")){
 			foreach($this->getServer()->getOnlinePlayers() as $player){
 				if($player->getAddress() === $ip){
 					$player->kick($reason, false);
@@ -378,10 +385,6 @@ class Main extends PluginBase implements Listener{
 			}
 		}
 		return $playerID;
-	}
-
-	public function warnPlayer($playerName, $reason, $points){
-		//TODO
 	}
 }
 //Theory is when you know something, but it doesn't work. Practice is when something works, but you don't know why. Programmers combine theory and practice: Nothing works and they don't know why!
