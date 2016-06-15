@@ -10,7 +10,7 @@ branches:
 
 before_script:
  - phpenv config-rm xdebug.ini
- - git clone --depth=50 --branch=master https://github.com/ClearSkyTeam/ClearSky.git
+ - git clone --depth=50 --branch=php5 https://github.com/ClearSkyTeam/ClearSky.git
  - pecl install channel://pecl.php.net/pthreads-2.0.10
  - pecl install channel://pecl.php.net/weakref-0.2.6
  - echo | pecl install channel://pecl.php.net/yaml-1.1.1
