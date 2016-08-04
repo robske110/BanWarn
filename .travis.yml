@@ -18,7 +18,7 @@ before_script:
  - cd ClearSky
  - mkdir plugins
  - cd plugins
- - wget -O DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.9.0/DevTools_v1.9.0.phar
+ - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
  - cd /home/travis/build/robske110/BanWarn/
  - cp -rf Travis.php ClearSky/
  - cp -rf English/ ClearSky/plugins/
