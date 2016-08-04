@@ -2,9 +2,9 @@
 
 **TravisCI** [![TravisCI](https://api.travis-ci.org/robske110/BanWarn.svg?branch=master)](https://travis-ci.org/robske110/BanWarn)
 
-####Version `1.2.0` is **stable** for production and recommended for all BanWarn users! [**RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.2.0)
+###Version `1.2.0` is **stable** for production and recommended for all BanWarn users! [**RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.2.0)
 
-####I'm currently working on 1.3.0. It is in the very early devlopment process, no Alphas are available yet. [Changes](https://github.com/robske110/BanWarn/issues/1)
+####This is the 2.0.0 branch. Yep, you heard right a MASSIVE update is coming. It'll take some time though, as it'll have many new cool features. Prepare for looong alpha and beta periods!
 
 #####Look in issue https://github.com/robske110/BanWarn/issues/1 for detailed info and Changelogs for 1.1.0 and 1.2.0 and use it for FeatureRequests!
 

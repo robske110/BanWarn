@@ -1,4 +1,4 @@
-All Releases will be posted here
+All Releases are posted here
 
 Version 1.2.0-InDev_alpha5 is not stable! [In the /1.2.X/AlPHAS:BETAS/ folder] For users, wich used this version it is highly recommened to upgrade to alpha7 or beta versions
 

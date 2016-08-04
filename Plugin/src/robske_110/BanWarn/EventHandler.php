@@ -15,8 +15,6 @@ use pocketmine\utils\TextFormat as TF;
 
 class Main extends PluginBase implements Listener{
 	const PLUGIN_MAIN_PREFIX = "[BanWarn] ";
-	const CURRENT_DATABASE_VERSION = 0.1;
-	const CURRENT_CONFIG_VERSION = 4;
 	
 	public $warnsys;
 	public $clientBan;
@@ -25,7 +23,6 @@ class Main extends PluginBase implements Listener{
 
 	public function onEnable(){
 		$this->getServer()->getLogger()->critical(PLUGIN_MAIN_PREFIX."You are using a version wich is known to not work! Please get the latest stable version from https://github.com/robske110/BanWarn/releases!");
-		Utils::init($this->getServer());
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		@mkdir($this->getDataFolder());
 		$this->warnsys = new Config($this->getDataFolder() . "warnsys.yml", Config::YAML, array());
@@ -404,4 +401,3 @@ class Main extends PluginBase implements Listener{
 	}
 }
 //Theory is when you know something, but it doesn't work. Practice is when something works, but you don't know why. Programmers combine theory and practice: Nothing works and they don't know why!
-//Just keep doing though. Just do it. Just keep working. Never give up.
