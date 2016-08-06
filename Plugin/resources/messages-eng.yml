@@ -1,0 +1,32 @@
+#BanWarn translation file.
+#Be aware that this file will be overwritten by a update.
+#Just copy this file, rename your copied file to messages-customized.yml,
+#make your edits there, and then change the lang setting in config.yml to customized.
+#Be sure to check this file after an update for possible new message strings.
+---
+cmd:
+  warn:
+    desc: "Warns a player"
+    usage: "/warn <PlayerName> <Reason> [Points]"
+    msgs: #TODO
+  warninfo:
+    desc: "Outputs info about the warnings a player has"
+    usage: "/warninfo <PlayerName>"
+    msgs: #TODO
+  warnpardon:
+    desc: "Wipes all warns of a player or removes single warns"
+    usage: "/warnpardon <PlayerName>"
+    msgs: #TODO
+perm:
+  BanWarn.command.warn: "Allows to run the /warn command"
+  BanWarn.command.warninfo: "Allows to run the /warninfo command"
+  BanWarn.command.warninfo.others: "Allows to use /warninfo <PlayerName>"
+  BanWarn.command.warnpardon: "Allows to run the /warninfo command"
+class:
+  database:
+    construct:
+      configwarn1:
+      configwarn2:
+    dataBaseUpgrade:
+      
+...

@@ -334,26 +334,6 @@ class Main extends PluginBase implements Listener{
 		}
 		return $remSuceededLvls;
 	}
-	
-	private function banClient($playerName, $playerID){
-		if($this->config->get("Client-Ban")){
-			$this->clientBan->set($playerName, $playerID);
-			$this->clientBan->save(true);
-		}
-	}
-	private function banIP($ip, $reason, $playerName = "unknown", $issuer = "unknown"){
-		if($this->config->get("IP-Ban")){
-			foreach($this->getServer()->getOnlinePlayers() as $player){
-				if($player->getAddress() === $ip){
-					$player->kick($reason, false);
-				}
-			}
-			$this->getServer()->getNetwork()->blockAddress($ip, -1);
-			$this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan BannedPlayer:".$playerName, null, $issuer);
-		}else{
-			$player->kick($reason, false);
-		}
-	}
 	private function sendMsgToSender($sender, $message){
 		if($sender instanceof Player){
 			$sender->getPlayer()->sendMessage($message);
