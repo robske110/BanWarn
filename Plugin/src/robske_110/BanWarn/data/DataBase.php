@@ -65,8 +65,10 @@ class DataManager{
 			$this->config->set('IP-ban', $this->config->exists('IP-Ban') ? $this->config->get('IP-Ban', true) : $this->config->get('IP-ban', true));
 			$this->config->set('Client-ban', $this->config->exists('Client-ban') ? $this->config->get('Client-ban', true) : $this->config->get('Client-ban', true));
 			$this->config->set('notify-mode', $this->config->exists('notify-mode') ? $this->config->get('notify-mode', true) : $this->config->get('notify-mode', true));
+			$this->config->set('lang', $this->config->get('lang', 'eng');
+			//TODO::CLEAN UP SQL TO ONE CNFG POINT
 			$this->config->set('SQL-enabled', $this->config->get('SQL-enabled', false));
-			$this->config->set('SQL-data', $this->config->get('SQL-data', ['server' => '', 'username' => '', 'password' => '']));
+			$this->config->set('SQL-data', $this->config->get('SQL-data', ['connection' => ['server' => '','port' => '', 'username' => '', 'password' => ''], 'database' => 'BanWarn']));
 			$this->config->set('ConfigVersion', 4);
 			$this->config->set('DataBaseVersion', 0.1);
 		}

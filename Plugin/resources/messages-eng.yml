@@ -23,10 +23,9 @@ perm:
   BanWarn.command.warninfo.others: "Allows to use /warninfo <PlayerName>"
   BanWarn.command.warnpardon: "Allows to run the /warninfo command"
 class:
-  database:
+  DataBase:
     construct:
       configwarn1:
       configwarn2:
     dataBaseUpgrade:
-      
 ...

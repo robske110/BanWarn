@@ -8,6 +8,7 @@ use pocketmine\utils\Config;
 class Translator{
 	private $main;
 	private $translationFile;
+	private $fallBackFile;
 	
 	private static $langs = ['eng','deu'];
 	private static $friendlyLangNames = [
@@ -38,7 +39,8 @@ class Translator{
 		foreach(self::$langs as $lang){
 			$this->plugin->saveResource(self::getLangFileName($lang));
 		}
-		$this->translationFile = new Config(self::getLangFilePath(), Config::YAML, []);
+		$this->translationFile = new Config(self::getLangFilePath($selectedLang), Config::YAML, []);
+		$this->fallbackFile = new Config(self::getLangFilePath(self::$langs[1]))
 		$this->selectedLang = $selectedLang;
 	}
 	
