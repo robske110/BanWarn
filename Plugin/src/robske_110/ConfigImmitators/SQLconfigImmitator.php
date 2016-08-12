@@ -1,6 +1,6 @@
 <?php
 
-namespace robske_110\BanWarn\data;
+namespace robske_110\ConfigImmitators;
 
 use robske_110\BanWarn\Main;
 use pocketmine\Server;
@@ -8,14 +8,9 @@ use pocketmine\Server;
 /*
 * This class was originally written for the BanWarn project.
 * You are free to use or modify this class with this disclaimer left in.
-* THIS CLASS HAS BEEN WRITTEN BY @robske_110 (Tim H.). DO NOT CLAIM THIS FILE AND OR ITS CONTENTS AS YOURS!
+* THIS CLASS HAS BEEN WRITTEN BY @robske_110 (Tim H.). DO NOT CLAIM THE CHANGES AS YOURS!
 * THIS CLASS IS BASED ON PocketMine's CONFIG CLASS!
-*/
-
-/*
-* TODO:
-* -Pinging the main connection. (Do i like main connections: erm. nope. TODO:doOnlyOneConnection) //makeInitConnection static call from a THREAD. maybe make full one thread building (bad idea). no lol idk.
-* -Write actual saving and writing code.
+* This class has the same license as the PocketMine project. (GPLv3)
 */
 
 /**
