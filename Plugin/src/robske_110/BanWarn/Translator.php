@@ -2,7 +2,7 @@
 
 namespace robske_110\BanWarn;
 
-use robske_110\BanWarn\Main;
+use robske_110\BanWarn\BanWarn;
 use pocketmine\utils\Config;
 
 class Translator{
@@ -34,7 +34,7 @@ class Translator{
 		return $this->main->getDataFolder().self::getLangFileName($lang);
 	}
 	
-	public function __construct(Main $main, Server $server, $selectedLang){
+	public function __construct(BanWarn $main, Server $server, $selectedLang){
 		$this->main = $main;
 		foreach(self::$langs as $lang){
 			$this->plugin->saveResource(self::getLangFileName($lang));
@@ -53,7 +53,7 @@ class Translator{
 					$translatedString = str_replace("&&var".$cnt."&&", $inMsgVar, $translatedString);
 				}else{
 					$translatedString = $translatedString." var".$cnt.$inMsgVar;
-					Utils::debug(Main::PLUGIN_MAIN_PREFIX."Failed to insert all variables into the translatedString. Data:"."transStr:".$translationString."varCnt:".$cnt."inMsgVar:".$inMsgVar."transEdString:".$translatedString); //TODO::ERR
+					Utils::debug("Failed to insert all variables into the translatedString. Data:"."transStr:".$translationString."varCnt:".$cnt."inMsgVar:".$inMsgVar."transEdString:".$translatedString); //TODO::ERR
 				}
 			}
 			return $translatedString;
@@ -67,7 +67,7 @@ class Translator{
 		if($baseTranslateResult !== false){
 			return $baseTranslateResult;
 		}else{
-			Utils::warning(Main::PLUGIN_MAIN_PREFIX."Failed to translate the string ".$translationString." in the default lang".self::$langs[0]."!"); //TODO::ERR
+			Utils::warning("Failed to translate the string ".$translationString." in the default lang".self::$langs[0]."!"); //TODO::ERR
 			return "Missing translation!"; //TODO::ERR
 		}
 	}
@@ -78,7 +78,7 @@ class Translator{
 		if($baseTranslateResult !== false){
 			return $baseTranslateResult;
 		}else{
-			Utils::debug(Main::PLUGIN_MAIN_PREFIX."Failed to translate the string ".$translationString." in the lang ".$selectedLang."! Falling back to lang".self::$langs[0]); //TODO::ERR
+			Utils::debug("Failed to translate the string ".$translationString." in the lang ".$selectedLang."! Falling back to lang".self::$langs[0]); //TODO::ERR
 			return $this->fallbackTranslate($translationString, $inMsgVars);		
 		}
 	}

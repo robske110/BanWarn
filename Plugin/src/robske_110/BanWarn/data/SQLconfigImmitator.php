@@ -5,14 +5,24 @@ namespace robske_110\BanWarn\data;
 use robske_110\BanWarn\Main;
 use pocketmine\Server;
 
-/**
+/*
 * This class was originally written for the BanWarn project.
 * You are free to use or modify this class with this disclaimer left in.
 * THIS CLASS HAS BEEN WRITTEN BY @robske_110 (Tim H.). DO NOT CLAIM THIS FILE AND OR ITS CONTENTS AS YOURS!
 * THIS CLASS IS BASED ON PocketMine's CONFIG CLASS!
 */
+
+/*
+* TODO:
+* -Pinging the main connection. (Do i like main connections: erm. nope. TODO:doOnlyOneConnection) //makeInitConnection static call from a THREAD. maybe make full one thread building (bad idea). no lol idk.
+* -Write actual saving and writing code.
+*/
+
+/**
+* This class acts pretty much like the PM Config class, just with using SQL.
+*/
 class SQLconfigImmitator{
-	const DETECT = 
+	#const TYPE_DETECT = 0; //TODO
 	const TYPE_NORMAL = 1;
 	const TYPE_SPLIT = 2; //BETA OF TRYING TO SPLIT THE ARRAY IN THE MYSQL FIELDS (key=cell)
 	
@@ -40,39 +50,47 @@ class SQLconfigImmitator{
 	* @param string     $table    Name of the MYSQL table in wich the config file should be stored being immitated
 	* @param null|array $default  Array with the default values that will be used if the config doesn't exist
 	* @param array      $userData Array with [$username,$pwd], if not set or [NULL,NULL] passed no userData is required
-	* @param int        $type     A type constant (TYPE_) wich defines in wich way the clas should save/read the data.
+	* @param int        $type     A type constant (TYPE_) wich defines in wich way the class should save/read the data.
 	*/
-	public function __construct($url, $port, $db, $table, $default = [], $userData = [NULL, NULL], $type = self::TYPE_NORMAL){
+	public function __construct($url, $port, $db, $table, $default = [], $userData, $type = self::TYPE_NORMAL){
+		if(!is_array($userData)){
+			$userData = [NULL, NULL];
+		}
 		$this->initConnection($url, $port, $db, $table, $userData);
-		$this->load($table, $default);
+		$this->load($type, $db, $table, $default);
 	}
 
 	/**
-	* Removes all the changes in memory and loads the file again
+	* Removes all the changes in memory and loads the data from SQL again
 	*/
 	public function reload(){
 		$this->config = [];
 		$this->nestedCache = [];
 		$this->correct = false;
 		$this->initConnection($this->url, $this->port, $this->pwd);
-		$this->load($this->file);
+		$this->load($this->db, );
 		#$this->load($this->file, $this->type);
 	}
-
+	
+	/**
+	* @param string $url
+	* @param int    $port
+	* @param array  $userData
+	*/
 	public function initConnection($url, $port, $userData){
 		$this->url = $url;
 		$this->port = $port;
 		$this->pwd = $pwd;
-	    $this->sql = new \mysqli($url, $userData[0], $userData[2], , $port);
-	    if($this->sql->connect_error){
-	    	throw new \RuntimeException("Failed to connect to MySQL: ".
+		$this->sql = new \mysqli($url, $userData[0], $userData[1], , $port);
+		if($this->sql->connect_error){
+			throw new \RuntimeException("Failed to connect to MySQL: ".
 										"errno:".$mysqli->connect_errno." ".
 										"error:".$mysqli->connect_error
-			);
-	    }
-		$logger = Server::getInstance()->getLogger();
-		$logger->info("MYSQL connection established: ".mysqli_get_host_info($this->sql));
+		);
 	}
+	$logger = Server::getInstance()->getLogger();
+	$logger->info("MYSQL connection established: ".mysqli_get_host_info($this->sql));
+}
 
 	/**
 	* @param       $file
@@ -81,7 +99,7 @@ class SQLconfigImmitator{
 	*
 	* @return bool
 	*/
-	public function load($table, $default){
+	public function load($db, $table, $default, $type = self::DETECT){
 		$this->type = (int) $type;
 		
 		if(!is_array($default)){
@@ -91,6 +109,7 @@ class SQLconfigImmitator{
 			$this->config = $default;
 			$this->save();
 		}else{
+			//save
 			if(!is_array($this->config)){
 				$this->config = $default;
 			}
@@ -109,11 +128,11 @@ class SQLconfigImmitator{
 	public function save($async = false){
 		try{
 			if($async){
-				//Server::getInstance()->getScheduler()->scheduleAsyncTask(new AsyncSQLconfigWriter($this->config)); TODO
+				//Server::getInstance()->getScheduler()->scheduleAsyncTask(new AsyncSQLconfigWriter($this->config, $this->url, $this->port, [$this->username, $this->pwd])); TODO
 			}else{
 				switch($this->type){
 					case self::TYPE_NORMAL:
-				
+					
 					case self::TYPE_SPLIT:
 					//TODO
 					break;

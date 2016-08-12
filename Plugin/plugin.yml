@@ -2,7 +2,7 @@ name: BanWarn
 api: 2.0.0
 version: 2.0.0-InDev-alpha0
 load: POSTWORLD
-main: robske_110\BanWarn\Main
+main: robske_110\BanWarn\BanWarn
 author: robske_110
 website: https://github.com/robske110/BanWarn
 

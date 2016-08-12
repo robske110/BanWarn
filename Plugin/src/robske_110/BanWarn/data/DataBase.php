@@ -2,57 +2,66 @@
 
 namespace robske_110\BanWarn\data;
 
-use robske_110\BanWarn\Main;
+use robske_110\BanWarn\BanWarn;
+use robske_110\BanWarn\Utils;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 
 class DataManager{
+	private $main;
 	
 	private $warnData;
 	private $clientBan;
 	private $config;
 	private $accountData;
 
-	public function __construct(Main $main, Server $server){
-		@mkdir($this->getDataFolder());
+	public function __construct(BanWarn $main, Server $server){
+		$this->main = $main;
+		@mkdir($main->getDataFolder());
 		$this->warnData = new Config($main->getDataFolder() . "warnData.yml", Config::YAML, []);
 		$this->clientBan = new Config($main->getDataFolder() . "clientBan.list", Config::ENUM, []);
 		$this->config = new Config($main->getDataFolder() . "config.yml", Config::YAML, []);
 		if(!$this->config->check()){
-			Utils::warning(Main::PLUGIN_MAIN_PREFIX."Your config format is somehow broken. Please check it using YAML validators.");
-			Utils::log(Main::PLUGIN_MAIN_PREFIX."The plugin will use the default settings. This may cause database corruption, if you have just updated the version of this plugin!");
+			Utils::warning("Your config format is somehow broken. Please check it using YAML validators.");
+			Utils::log("The plugin will use the default settings. This may cause database corruption, if you have just updated the version of this plugin!");
 		}
 		if(!$this->warnData->check() || !$this->clientBan->check()){
-			Utils::log(Main::PLUGIN_MAIN_PREFIX );
+			Utils::log(BanWarn::PLUGIN_MAIN_PREFIX );
 		}
-		$this->warnsys->save();
+		$this->warnData->save();
 		$this->clientBan->save();
-		$this->dataBaseUpgrade($this->config->get("DataBaseVersion", NULL), Main::CURRENT_DATABASE_VERSION);
-		$this->configUpgrade($this->config->get("ConfigVersion"), MAIN::CURRENT_CONFIG_VERSION);
+		$this->dataBaseUpgrade($this->config->get("DataBaseVersion", NULL), BanWarn::CURRENT_DATABASE_VERSION);
+		$this->configUpgrade($this->config->get("ConfigVersion"), BanWarn::CURRENT_CONFIG_VERSION);
 	}
     
 	public function dataBaseUpgrade($version, $newVersion){
 		if($version == NULL){ //User upgrading from 1.x.x to 2.x.x
 			if($this->config->get("ConfigVersion") >= 4){
-				Utils::critical(Main::PLUGIN_MAIN_PREFIX."Your config version says you have already used 2.0.0 while your DataBase version seems to still be at the 1.2.x state! The plugin can try to upgrade the database regardless of this mismatch though! If you are unsure what to do KILL the Server in the next 15 secounds and backup your BanWarn plugin folder. Then start the server again and ignore this messsage. If this plugin doesn't continue to function normally after you performed these steps, please contact the plugin developer (robske_110) with the following ErrorID: E_9901!"); //TODO::ERR
+				Utils::critical("Your config version says you have already used 2.0.0 while your DataBase version seems to still be at 1.x.x states! The plugin can try to upgrade the database regardless of this mismatch though! If you are unsure what to do KILL the Server in the next 15 secounds and backup your BanWarn plugin folder. Then start the server again and ignore this messsage. If this plugin doesn't continue to function normally after you performed these steps, please contact the plugin developer (robske_110) with the following ErrorID: E_9901!"); //TODO::ERR
 				sleep(10);
-				Utils::critical(Main::PLUGIN_MAIN_PREFIX."Are you ABSOLUTELY sure you have backed up the BanWarn folder? If not, please kill the Server NOW!");
+				Utils::critical("Are you ABSOLUTELY sure you have backed up the BanWarn folder? If not, please kill the Server NOW!");
 				sleep(5);
 			}
-			Utils::warning(Main::PLUGIN_MAIN_PREFIX."This looks like the first time you are using a version above 1.2.x!");
-			Utils::log(Main::PLUGIN_MAIN_PREFIX."Due to changing how BanWarn internally handles the connection between player names and ClientIDs and some other improvements to the databases your databases have to be upgraded.");
+			Utils::warning("This looks like the first time you are using a 2.x.x version!");
+			Utils::log("Due to changing how BanWarn internally handles the connection between player names and ClientIDs and some other improvements to the databases your databases have to be upgraded.");
 			/* Actual Upgrade Code */
-			$oldClientBan = new Config($this->getDataFolder() . "clientBan.yml", Config::YAML, array());
+			$oldClientBan = new Config($this->main->getDataFolder() . "clientBan.yml", Config::YAML, array());
 			if($oldClientBan->check()){
 				$this->clientBan->setAll([]);
+				$newIndex = count($this->clientBan->getAll());
 				foreach($oldClientBan->getAll() as $playerName => $clientID){
-					$this->clientBan->setAll($this->clientBan->getAll()[] = $clientID);
+					Utils::debug($newIndex."=>".$clientID);
+					$this->clientBan->set($clientID, $newIndex);
+					$newIndex++;
 				}
 			}else{
 				Utils::warning("Unable to restore BAN information from the old version. You can ignore this warning as BAN information can be rebuilt."); //TODO:ERR
 			}
-			foreach($this->warnData->getAll()){
+			$this->clientBan->save();
+			Utils::debug(print_r($this->clientBan->getAll()));
+			Utils::debug($this->clientBan->get(0));
+			foreach($this->warnData->getAll() as $warnData){
 				
 			}
 		}
@@ -65,12 +74,12 @@ class DataManager{
 			$this->config->set('IP-ban', $this->config->exists('IP-Ban') ? $this->config->get('IP-Ban', true) : $this->config->get('IP-ban', true));
 			$this->config->set('Client-ban', $this->config->exists('Client-ban') ? $this->config->get('Client-ban', true) : $this->config->get('Client-ban', true));
 			$this->config->set('notify-mode', $this->config->exists('notify-mode') ? $this->config->get('notify-mode', true) : $this->config->get('notify-mode', true));
-			$this->config->set('lang', $this->config->get('lang', 'eng');
+			$this->config->set('lang', $this->config->get('lang', 'eng'));
 			//TODO::CLEAN UP SQL TO ONE CNFG POINT
 			$this->config->set('SQL-enabled', $this->config->get('SQL-enabled', false));
 			$this->config->set('SQL-data', $this->config->get('SQL-data', ['connection' => ['server' => '','port' => '', 'username' => '', 'password' => ''], 'database' => 'BanWarn']));
-			$this->config->set('ConfigVersion', 4);
-			$this->config->set('DataBaseVersion', 0.1);
+			$this->config->set('ConfigVersion', BanWarn::CURRENT_CONFIG_VERSION);
+			$this->config->set('DataBaseVersion', BanWarn::CURRENT_DATABASE_VERSION);
 		}
 		$this->config->save();
 	}
