@@ -1,6 +1,6 @@
 # BanWarn
 
-##2.0.0 release scheudle:
+##2.0.0 release schedule:
 - 1.Sep 2016::first ALPHA release
 - 15.Sep 2016:: first BETA release
 - 1.Oct 2016::final 2.0.0 release
