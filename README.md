@@ -1,5 +1,10 @@
 # BanWarn
 
+##2.0.0 release scheudle:
+- 1.Sep 2016::first ALPHA release
+- 15.Sep 2016:: first BETA release
+- 1.Oct 2016::final 2.0.0 release
+
 **TravisCI** [![TravisCI](https://api.travis-ci.org/robske110/BanWarn.svg?branch=master)](https://travis-ci.org/robske110/BanWarn)
 
 ###Version `1.2.0` is **stable** for production and recommended for all BanWarn users! [**RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.2.0)
