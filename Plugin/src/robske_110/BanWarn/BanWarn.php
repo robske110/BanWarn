@@ -20,19 +20,39 @@ class BanWarn extends PluginBase implements Listener{
 	const CURRENT_DATABASE_VERSION = 0.1;
 	const CURRENT_CONFIG_VERSION = 4.05;
 	
-	public $warnsys;
-	public $clientBan;
-	public $config;
-	public $tempWPUsers;
+	private $dataManager;
+	public $tempWPUsers; //TODO:move to idk... (CmdManager?)
 
 	public function onEnable(){
-		$this->getServer()->getLogger()->critical(self::PLUGIN_MAIN_PREFIX."You are using a version wich is known to not work! Please get the latest stable version from https://github.com/robske110/BanWarn/releases!");
-		Utils::init($this, true); //TODO::addConfigValueForThis
+		$this->getServer()->getLogger()->critical(self::PLUGIN_MAIN_PREFIX."You are using a version which is known to not work! Please get the latest stable version from https://github.com/robske110/BanWarn/releases!");
+		Utils::init($this, true); //TODO::addConfigValueForDebug
 		$this->dataManager = new DataManager($this, $this->getServer());
+		if(!$this->dataManager->isFullyInitialized()){
+			Utils::warning("BanWarn was unable to fully initialize its DataBases. You may want to open an issue at https://github.com/robske110/BanWarn/ ErrorID: ERR_9999"); //TODO::ERR
+		}
+		//$this->cmdManager = new CmdMananger();
 	}
 	
 	public function onDisable(){
 		Utils::close();
+	}
+	
+	public function banClient($clientID){
+		$this->dataBaseManager->banClient($clientID);
+	}
+	
+	public function banIP($ip, $reason, $playerName = "unknown", $issuer = "unknown"){
+		if($this->config->get("IP-ban")){
+			foreach($this->getServer()->getOnlinePlayers() as $player){
+				if($player->getAddress() === $ip){
+					$player->kick($reason, false);
+				}
+			}
+			$this->getServer()->getNetwork()->blockAddress($ip, -1);
+			$this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan BannedPlayer:".$playerName, null, $issuer);
+		}else{
+			$player->kick($reason, false);
+		}
 	}
 
 	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
@@ -219,54 +239,6 @@ class BanWarn extends PluginBase implements Listener{
 			}
 		}
 		return $remSuceededLvls;
-	}
-	private function sendMsgToSender($sender, $message){
-		if($sender instanceof Player){
-			$sender->getPlayer()->sendMessage($message);
-		}else{
-			$this->getServer()->getLogger()->info(PLUGIN_MAIN_PREFIX.$message);
-		}
-	}
-	public function countWPoints($playerID){
-		$tempStuffArray = $this->warnsys->get($playerID);
-		if($tempStuffArray != NULL){
-			$count = 0;
-			$Index = 0;
-			foreach($tempStuffArray as $playerData){
-				if($Index != 0){
-					$count = $count + $playerData[1];
-				}
-				$Index++;
-			}
-			return $count;
-		}
-		return -1;
-	}
-	private function getTypeAsNameOfSender($sender){
-		if($sender instanceof Player){
-			$NAME = $sender->getPlayer()->getName();
-		}else{
-			$NAME = "CONSOLE";
-		}
-		return $NAME;
-	} 
-	private function getWarnPlayerByName($playerName){
-		$playerID = NULL;
-		if($this->warnsys->getAll() != NULL){
-			$tempStuffArray = $this->warnsys->getAll();
-			foreach($tempStuffArray as $warnObject){
-				if(isset($warnObject[0])){
-					if(isset($warnObject[0]['RealPlayerName'])){
-						$realPlayerName = $warnObject[0]['RealPlayerName'];
-						if($realPlayerName == $playerName){
-							$playerID = $warnObject[0]['RealClientID'];
-							break;
-						}
-					}
-				}
-			}
-		}
-		return $playerID;
 	}
 }
 //Theory is when you know something, but it doesn't work. Practice is when something works, but you don't know why. Programmers combine theory and practice: Nothing works and they don't know why!

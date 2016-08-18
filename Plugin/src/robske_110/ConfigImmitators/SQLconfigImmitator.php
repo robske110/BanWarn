@@ -81,11 +81,11 @@ class SQLconfigImmitator{
 			throw new \RuntimeException("Failed to connect to MySQL: ".
 										"errno:".$mysqli->connect_errno." ".
 										"error:".$mysqli->connect_error
-		);
+			);
+		}
+		$logger = Server::getInstance()->getLogger();
+		$logger->info("MYSQL connection established: ".mysqli_get_host_info($this->sql));
 	}
-	$logger = Server::getInstance()->getLogger();
-	$logger->info("MYSQL connection established: ".mysqli_get_host_info($this->sql));
-}
 
 	/**
 	* @param       $file

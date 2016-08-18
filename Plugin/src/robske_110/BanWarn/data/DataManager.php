@@ -12,36 +12,79 @@ use pocketmine\utils\Config;
 class DataManager{
 	private $main;
 	
+	private $isFullyInitialized = false;
 	private $warnData;
 	private $clientBan;
 	private $config;
-	private $accountData;
+	private $error = false;
 
 	public function __construct(BanWarn $main, Server $server){
 		$this->main = $main;
-		@mkdir($main->getDataFolder());
-		$this->warnData = new Config($main->getDataFolder() . "warnData.yml", Config::YAML, []);
-		$this->clientBan = new Config($main->getDataFolder() . "clientBan.list", Config::ENUM, []);
-		$this->config = new Config($main->getDataFolder() . "config.yml", Config::YAML, []);
-		if(!$this->config->check()){
-			Utils::warning("Your config format is somehow broken. Please check it using YAML validators.");
-			Utils::log("The plugin will use the default settings. This may cause database corruption, if you have just updated the version of this plugin!");
-			$this->config = new RAMconfigImmitator();
+		/** Begin of a critical part: Initializing the DataBases */
+		try{
+			@mkdir($main->getDataFolder());
+			$this->warnData = new Config($main->getDataFolder() . "warnData.yml", Config::YAML, []);
+			$this->clientBan = new Config($main->getDataFolder() . "clientBan.list", Config::ENUM, []);
+			$this->config = new Config($main->getDataFolder() . "config.yml", Config::YAML, []);
+			if(!$this->config->check()){
+				Utils::warning("Your config format is somehow broken. Please check it using YAML validators.");
+				Utils::log("The plugin will use the default settings. This may cause database corruption, if you have just updated the version of this plugin!");
+				$this->config = new RAMconfigImmitator();
+			}
+			if(!$this->warnData->check() || !$this->clientBan->check()){
+				Utils::critical("Your databases formats are somehow broken. Please check your databases using YAML validators.");
+			}
+			$this->warnData->save();
+			$this->clientBan->save();
+			try{
+				$this->dataBaseUpgrade($this->config->get("DataBaseVersion", NULL), BanWarn::CURRENT_DATABASE_VERSION);
+			}catch(\Exception $e){
+				$this->error = true;
+				Utils::critical("ERROR while upgrading the databases. Exception: ".$e->getMessage()." BanWarnErrorID: E_9902"); //TODO::ERR
+				Utils::warning("Stack Trace: ".$e->getTraceAsString());
+			}
+			$this->configUpgrade($this->config->get("ConfigVersion"), BanWarn::CURRENT_CONFIG_VERSION);
+			if(!$this->error){
+				$this->isFullyInitialized = true;
+			}
+		}catch(\Exception $e){
+			$this->error = true;
+			Utils::critical("ERROR while initiating the databases. Exception: ".$e->getMessage()." BanWarnErrorID: E_9903"); //TODO::ERR
+			Utils::warning("Stack Trace: ".$e->getTraceAsString());
 		}
-		if(!$this->warnData->check() || !$this->clientBan->check()){
-			Utils::critical("Your databases formats are somehow broken. Please check your databases using YAML validators.");
-		}
-		$this->warnData->save();
-		$this->clientBan->save();
-		$this->dataBaseUpgrade($this->config->get("DataBaseVersion", NULL), BanWarn::CURRENT_DATABASE_VERSION);
-		$this->configUpgrade($this->config->get("ConfigVersion"), BanWarn::CURRENT_CONFIG_VERSION);
+		/** End of a critical part: Initializing the DataBases */
 	}
-    
+	
+    /**
+	 * @param long $clientID
+	*/
 	public function isClientIDbanned($clientID){
-		return in_array($clientID, $this->clientBan->getAll(true);
+		return in_array($clientID, $this->clientBan->getAll(true));
+	}
+	
+	private function importOldBanWarnData($warnData, $initialClientID){
+		Utils::debug("Migrating warnData".print_r($warnData));
+		$isDamaged = false;
+		if(!is_array($warnData)){
+			$this->userDataMgr->addWarnPlayer($warndata['RealPlayerName']);
+		}
+		if(!isset($warndata[0]["RealClientID"]){ //ClientID can be got by the key too...
+			$isDamaged = true;
+		}
+		if(!isset($warndata[0]["RealPlayerName"]) && (!isset($warndata[1]) || !is_array($warndata[1]))){ //Useless entry... -_-
+			return self::STATE_UNRECOVERABLE;
+		}
+		if(!isset($warndata[0]["RealPlayerName"])){ //Useful for getting WarnData => ClientID without playerName
+			$isDamaged = true;
+		}
+		if($isDamaged){
+			return self::STATE_DAMAGED;
+		}
+		return STATE_OK;
 	}
 	
 	public function dataBaseUpgrade($version, $newVersion){
+		$this->addWarnPlayerID();
 		if($version == NULL){ //User upgrading from 1.x.x to 2.x.x
 			if($this->config->get("ConfigVersion") >= 4){ //TODO:detect when the user is entering stop exit or abort and then call shutdown.
 				Utils::critical("Your config version says you have already used 2.0.0 while your DataBase version seems to still be at 1.x.x states! The plugin can try to upgrade the database regardless of this mismatch though! If you are unsure what to do KILL the Server in the next 20 secounds and backup your BanWarn plugin folder. Then start the server again and ignore this messsage. If this plugin doesn't continue to function normally after you performed these steps, please contact the plugin developer (robske_110) with the following ErrorID: E_9901!"); //TODO::ERR
@@ -66,15 +109,22 @@ class DataManager{
 			}
 			$this->clientBan->save();
 			Utils::debug(print_r($this->clientBan->getAll(true)));
-			foreach($this->warnData->getAll() as $warnData){
-				Utils::debug("Migrating warnData".$warnData);
-				
+			$oldWarnSys = new Config($this->main->getDataFolder() . "warnsys.yml", Config::YAML, array());
+			if(!is_array($oldWarnData = $oldWarnSys->getAll())){
+				throw new \Exception("Old warnData could not be restored")
+			}
+			foreach($this->warnData->getAll() as $initialClientID => $warnData){
+				/*
+				$this->importOldBanWarnData($warnData, $initialClientID);
+				*/
 			}
 		}
-		
 	}
 	
 	public function configUpgrade($version, $newVersion){
+		if($version === NULL){
+			Utils::log("This looks like the first time you start BanWarn!");
+		}
 		if($version != $newVersion){
 			$this->config->set('max-points-until-ban', $this->config->get('max-points-until-ban', 10));
 			$this->config->set('IP-ban', $this->config->exists('IP-Ban') ? $this->config->get('IP-Ban', true) : $this->config->get('IP-ban', true));
@@ -89,25 +139,13 @@ class DataManager{
 		$this->config->save();
 	}
 
-	private function banClient($clientID){
+	/**
+	 * INTERNAL
+	*/
+	public function banClient($clientID){
 		if($this->config->get("Client-ban")){
 			$this->clientBan->set($clientID);
 			$this->clientBan->save(true);
-		}
-	}
-	
-	//TODO:move this to somewhere else
-	private function banIP($ip, $reason, $playerName = "unknown", $issuer = "unknown"){
-		if($this->config->get("IP-ban")){
-			foreach($this->getServer()->getOnlinePlayers() as $player){
-				if($player->getAddress() === $ip){
-					$player->kick($reason, false);
-				}
-			}
-			$this->getServer()->getNetwork()->blockAddress($ip, -1);
-			$this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan BannedPlayer:".$playerName, null, $issuer);
-		}else{
-			$player->kick($reason, false);
 		}
 	}
 	
@@ -125,7 +163,34 @@ class DataManager{
 		return -1;
 	}
 	//TODO:move to user data mgr
-	private function get
+	#a small note: ID is referred to as any ID which identifies a Player. WarnID is an id which tries to represent one human being. This is of course not possible at all so it is just random guessing.
+	/**
+	 * If both IDs are unknown this qill also create a new WarnPlayer.
+	 * @param mixed $id1 ID1 (Type specified by $type1)
+	 * @return mixed $id2 ID2 (Type specified by $type2)
+	 * @param int $type1 Override type of $id1 [Can be: UserDataMgr::TYPE_CLIENTID UserDataMgr::TYPE_IP UserDataMgr::TYPE_PlayerName]
+	 * @param int $type2 Override type of $id2 [Can be: UserDataMgr::TYPE_CLIENTID UserDataMgr::TYPE_IP UserDataMgr::TYPE_PlayerName]
+	 * @return int $warnPlayerID
+	*/
+	/*
+	private function addWarnPlayer($id1, $id2, $type1 = self::TYPE_DETECT, $type2 = self::TYPE_DETECT){
+		if($type1 == self::TYPE_DETECT){
+			$type1 = self::detectType($id1);
+		}
+		if($type2 == self::TYPE_DETECT){
+			$type2 = self::detectType($id2);
+		}
+		if(switch){
+			$warnPlayerID = $this->getNextID();
+		}else{
+			$warnPlayerID = $this->getRealPlayerIDfor($idk1);
+		}
+		$this->finalAddParamForPlayer($warnPlayerID, $idk1, $idk2);
+		return $warnPlayerID
+	}
+	private function addWarnToPlayer($warnPlayerID, $reason, $points){
+		
+	}
 	private function getWarnPlayerIDbyClientID($playerName){
 		
 	}
@@ -147,6 +212,7 @@ class DataManager{
 		}
 		return $playerID;
 	}
+	*/
 }
 
 //New array design of warnData: $banWarnPlayerID => []

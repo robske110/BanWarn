@@ -3,6 +3,7 @@
 namespace robske_110\BanWarn;
 
 use pocketmine\Server;
+use pocketmine\Player;
 use robske_110\BanWarn\BanWarn;
 
 abstract class Utils{
@@ -33,13 +34,29 @@ abstract class Utils{
 			}
 		}
 	}
-	
 	public static function close(){
 		if(self::$debugEnabled){
 			fclose(self::$debugFile);
 		}
 	}
     
+	public static function sendMsgToSender($sender, $msg){
+		if($sender instanceof Player){
+			$sender->getPlayer()->sendMessage(PLUGIN_MAIN_PREFIX.$message);
+		}else{
+			self::log($msg);
+		}
+	}
+	private static function getTypeAsNameOfSender($sender){
+		if($sender instanceof Player){
+			$name = $sender->getPlayer()->getName();
+		}else{
+			$name = "CONSOLE";
+		}
+		return $name;
+	}
+	
+	
 	public static function log($msg, $logLvl = self::LOG_LVL_INFO){
 		switch($logLvl){
 			case self::LOG_LVL_INFO: self::$logger->info($msg); break;
