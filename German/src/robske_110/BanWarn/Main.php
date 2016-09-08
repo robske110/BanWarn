@@ -17,7 +17,7 @@ class Main extends PluginBase implements Listener{
 	public $warnsys;
 	public $clientBan;
 	public $config;
-	public $tempWPUsers;
+	public $tempWPusers = [];
 
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
@@ -111,24 +111,24 @@ class Main extends PluginBase implements Listener{
 	}
 	
 	public function onChat(PlayerChatEvent $event){
-		if(isset($this->tempWPUsers[$event->getPlayer()->getName()])){
+		if(isset($this->tempWPusers[$event->getPlayer()->getName()])){
 			$msg = strtolower($event->getMessage());
-			$sender = $event->getSender();
-			$playerName = strtolower($this->tempWPUsers[$event->getPlayer()->getName()]);
+			$sender = $event->getPlayer();
+			$playerName = strtolower($this->tempWPusers[$event->getPlayer()->getName()]);
 			$event->setCancelled(true);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender)){
-				unset($this->tempWPUsers[$event->getPlayer()->getName()]);
+				unset($this->tempWPusers[$event->getPlayer()->getName()]);
 			}
 		}
 	}
 	public function onConsoleChat(ServerCommandEvent $event){
-		if(isset($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"])){
+		if(isset($this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"])){
 			$msg = strtolower($event->getCommand());
 			$sender = $event->getSender();
 			$event->setCancelled(true);
-			$playerName = strtolower($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"]);
+			$playerName = strtolower($this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"]);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender)){
-				unset($this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"]);
+				unset($this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"]);
 			}
 		}
 	}
@@ -187,7 +187,7 @@ class Main extends PluginBase implements Listener{
 				if($sender instanceof Player){
 					$this->tempWPusers[$sender->getName()] = $args[0];
 				}else{
-					$this->tempWPUsers["C.O.N.S.O.L.E_moreThan16Characters"] = $args[0]; //So it won't conflict with player names
+					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = $args[0]; //So it won't conflict with player names
 				}
 				$this->sendMsgToSender($sender, TF::GREEN."Du bist kurz davor eine Warnung oder alle Warnungen des Spielers '".TF::DARK_GRAY.$args[0].TF::GREEN."' zu entfernen!");
 				$this->sendMsgToSender($sender, TF::GREEN."Falls du dies abbrechen möchtest, gebe 'abort' ein");
@@ -296,10 +296,10 @@ class Main extends PluginBase implements Listener{
 		$playerID = $this->getWarnPlayerByName($playerName);
 		if($this->warnsys->exists($playerID)){
 			$warnData = $this->warnsys->get($playerID);
-			$index = count($array);
+			$index = count($warnData);
 			$index--;
-			$array[$index] = NULL;
-			$this->warnsys->set($playerID, $array);
+			$warnData[$index] = NULL;
+			$this->warnsys->set($playerID, $warnData);
 			$this->warnsys->save();
 		}
 		if($this->countWPoints($playerID) < $this->config->get("max-points-until-ban")){
@@ -369,14 +369,19 @@ class Main extends PluginBase implements Listener{
 		return $NAME;
 	} 
 	private function getWarnPlayerByName($playerName){
+		echo("callTo getWarnPlayerByName(".$playerName.")");
 		$playerID = NULL;
 		if($this->warnsys->getAll() != NULL){
 			$tempStuffArray = $this->warnsys->getAll();
 			foreach($tempStuffArray as $warnObject){
+				echo("obj");
 				if(isset($warnObject[0])){
+					echo("chk1");
 					if(isset($warnObject[0]['RealPlayerName'])){
+						echo("chk2");
 						$realPlayerName = $warnObject[0]['RealPlayerName'];
 						if($realPlayerName == $playerName){
+							echo("chk3");
 							$playerID = $warnObject[0]['RealClientID'];
 							break;
 						}
@@ -384,6 +389,7 @@ class Main extends PluginBase implements Listener{
 				}
 			}
 		}
+		echo("Returning: '".$playerID."'");
 		return $playerID;
 	}
 }
