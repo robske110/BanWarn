@@ -44,12 +44,12 @@ class Main extends PluginBase implements Listener{
 		foreach($this->clientBan->getAll() as $rawPlayerID){
 			if($playerID == $rawPlayerID){
 				$reason = "";
-				$Index = 0;
+				$index = 0;
 				foreach($this->warnsys->get($playerID) as $playerData){
-					if($Index != 0){
-						$reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+					if($index != 0){
+						$reason = $reason.TF::GREEN."W ".TF::WHITE.$index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
 					}
-					$Index++;
+					$index++;
 				}
 				$reason = "You are banned: \n".$reason;
 				$event->getPlayer()->kick($reason, false);
@@ -58,16 +58,15 @@ class Main extends PluginBase implements Listener{
 		}
 		if($this->countWPoints($playerID) >= $this->config->get("max-points-until-ban") && !$isAlreadyBanned){
 			$reason = "";
-			$tempStuffArray = $this->warnsys->get($playerID);
-			$Index = 0;
-			foreach($tempStuffArray as $playerData){
-				if($Index != 0){
-					$reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+			$index = 0;
+			foreach($this->warnsys->get($playerID) as $playerData){
+				if($index != 0){
+					$reason = $reason.TF::GREEN."W ".TF::WHITE.$index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
 				}
-				if($Index == 1){
+				if($index == 1){
 					$reason = $reason."\n\n\n";
 				}
-				$Index++;
+				$index++;
 			}
 			$reason = "You are banned: \n".$reason; //TODO::Translate
 			//IP_Ban
@@ -84,18 +83,22 @@ class Main extends PluginBase implements Listener{
 			$this->sendMsgToSender($sender, TF::RED."Aborted the warnpardon prompt"); //TODO::Translate
 		}elseif($msg == "last"){
 			$remResult = $this->removeLastWarn($playerName);
+			var_dump($remResult);
 			if($remResult["warnsys"] && $remResult["clientBan"] && $remResult["ipBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed! A server restart may be necassary"); //TODO::Translate TODO::FixServerRestartNeed
+				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed! He/she has been unbanned. A server restart may be necassary."); //TODO::Translate TODO::FixServerRestartNeed
 			}elseif($remResult["warnsys"] && $remResult["clientBan"]){
+				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed! He/she has been unbanned."); //TODO::Translate
+			}elseif($remResult["warnsys"]){
 				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed!"); //TODO::Translate
 			}else{
 				$this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!"); //TODO::Translate
 			}
 		}elseif($msg == "all"){
 			$wipeResult = $this->wipePlayer($playerName);
+			var_dump($wipeResult);
 			if($wipeResult["warnsys"] && $wipeResult["clientBan"] && $wipeResult["ipBan"]){
-				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed! A server restart may be necassary"); //TODO::Translate TODO::FixServerRestartNeed
-			}elseif($wipeResult["warnsys"] && $wipeResult["clientBan"]){
+				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed! A server restart may be necassary."); //TODO::Translate TODO::FixServerRestartNeed
+			}elseif($wipeResult["warnsys"]){
 				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed!"); //TODO::Translate
 			}else{
 				$this->sendMsgToSender($sender, TF::RED."The player '".TF::DARK_GRAY.$playerName.TF::RED."' has no warnings!"); //TODO::Translate
@@ -114,7 +117,7 @@ class Main extends PluginBase implements Listener{
 		if(isset($this->tempWPusers[$event->getPlayer()->getName()])){
 			$msg = strtolower($event->getMessage());
 			$sender = $event->getPlayer();
-			$playerName = strtolower($this->tempWPusers[$event->getPlayer()->getName()]);
+			$playerName = $this->tempWPusers[$event->getPlayer()->getName()];
 			$event->setCancelled(true);
 			if($this->parseWPpromptMsg($msg, $playerName, $sender)){
 				unset($this->tempWPusers[$event->getPlayer()->getName()]);
@@ -126,7 +129,7 @@ class Main extends PluginBase implements Listener{
 			$msg = strtolower($event->getCommand());
 			$sender = $event->getSender();
 			$event->setCancelled(true);
-			$playerName = strtolower($this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"]);
+			$playerName = $this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"];
 			if($this->parseWPpromptMsg($msg, $playerName, $sender)){
 				unset($this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"]);
 			}
@@ -161,20 +164,19 @@ class Main extends PluginBase implements Listener{
 					$playerName = strtolower($this->getServer()->getPlayer($args[0])->getName());
 					$playerID = $this->getServer()->getPlayer($args[0])->getClientID();
 				}else{
-					strtolower($playerName = $args[0]);
+					$playerName = strtolower($args[0]);
 					$playerID = $this->getWarnPlayerByName($playerName);
 				}
-				if($this->warnsys->exists($playerID)){
+				if($this->warnsys->exists($playerID) && count($tempStuffArray = $this->warnsys->get($playerID)) > 1){
 					$this->sendMsgToSender($sender, TF::GREEN."Warnings for the player '".TF::DARK_GRAY.$playerName.TF::GREEN."', who has ".$this->countWPoints($playerID)." Points:"); //TODO::Translate
-					$Index = 0;
-					$tempStuffArray = $this->warnsys->get($playerID);
+					$index = 0;
 					foreach($tempStuffArray as $playerData){
-						if($Index != 0){
-							$this->sendMsgToSender($sender, TF::GREEN."Warning ".TF::WHITE.$Index.":"); //TODO::Translate
+						if($index != 0){
+							$this->sendMsgToSender($sender, TF::GREEN."Warning ".TF::WHITE.$index.":"); //TODO::Translate
 							$this->sendMsgToSender($sender, TF::GREEN."Reason: ".TF::DARK_GRAY.$playerData[0]); //TODO::Translate
 							$this->sendMsgToSender($sender, TF::GREEN."Points: ".TF::DARK_GRAY.$playerData[1]); //TODO::Translate
 						}		
-						$Index++;
+						$index++;
 					}
 				}else{
 					$this->sendMsgToSender($sender, TF::RED."There are no warnings for the player '".TF::DARK_GRAY.$playerName.TF::RED."'!"); //TODO::Translate
@@ -185,11 +187,11 @@ class Main extends PluginBase implements Listener{
 			case "warnpardon":
 			if(isset($args[0])){
 				if($sender instanceof Player){
-					$this->tempWPusers[$sender->getName()] = $args[0];
+					$this->tempWPusers[$sender->getName()] = strtolower($args[0]);
 				}else{
-					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = $args[0]; //So it won't conflict with player names
+					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = strtolower($args[0]); //So it won't conflict with player names
 				}
-				$this->sendMsgToSender($sender, TF::GREEN."You are going to remove one warn or wipe all warns from the Player '".TF::DARK_GRAY.$args[0].TF::GREEN."'!");
+				$this->sendMsgToSender($sender, TF::GREEN."You are going to remove one warn or wipe all warns from the Player '".TF::DARK_GRAY.strtolower($args[0]).TF::GREEN."'!");
 				$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'");
 				$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns.");
 				$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn.");
@@ -202,12 +204,12 @@ class Main extends PluginBase implements Listener{
 		$playerName = strtolower($this->getServer()->getPlayer($args[0])->getName());
 		$playerID = $this->getServer()->getPlayer($args[0])->getClientId();
 		$array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings #FunFact this is the only line written by someone else @PEMapModder :)
-		$Index = count($array);
-		if($Index == 0){
+		$index = count($array);
+		if($index == 0){
 			$array[0] = ["RealPlayerName" => $playerName, "RealClientID" => $playerID];
-			$Index++;
+			$index++;
 		}
-		$array[$Index] = [$args[1], $args[2]];
+		$array[$index] = [$args[1], $args[2]];
 		$this->warnsys->set($playerID, $array);
 		$this->warnsys->save();
 		$tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." point(s)! He/she now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." point(s)."; //TODO::Translate
@@ -223,13 +225,12 @@ class Main extends PluginBase implements Listener{
 		}
 		if($this->countWPoints($playerID) >= $this->config->get("max-points-until-ban")){
 			$reason = "";
-			$tempStuffArray = $this->warnsys->get($playerID);
-			$Index = 0;
-			foreach($tempStuffArray as $playerData){
-				if($Index != 0){
-					$reason = $reason.TF::GREEN."W ".TF::WHITE.$Index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
+			$index = 0;
+			foreach($this->warnsys->get($playerID) as $playerData){
+				if($index != 0){
+					$reason = $reason.TF::GREEN."W ".TF::WHITE.$index.": ".TF::GREEN."Reason: ".TF::GOLD.$playerData[0]."\n"; //TODO::Translate
 				}
-				$Index++;
+				$index++;
 			}
 			$reason = "You are banned: \n".$reason; //TODO::Translate
 			//IP_Ban
@@ -244,12 +245,12 @@ class Main extends PluginBase implements Listener{
 		$playerID = $this->getWarnPlayerByName($playerName);
 		if($playerID != NULL){
 			$array = $this->warnsys->get($playerID, []); //Returns an empty array if the player has no previous warnings
-			$Index = count($array);
-			if($Index == 0){
+			$index = count($array);
+			if($index == 0){
 				$array[0] = ["RealPlayerName" => $playerName, "RealClientID" => $playerID];
-				$Index++;
+				$index++;
 			}
-			$array[$Index] = [$args[1], $args[2]];
+			$array[$index] = [$args[1], $args[2]];
 			$this->warnsys->set($playerID, $array);
 			$this->warnsys->save();
 			$tempMsgS = TF::GREEN . "The player '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been warned with the reason '".TF::DARK_GRAY.$args[1].TF::GREEN."' and ".TF::DARK_GRAY.$args[2].TF::GREEN." Point(s)! He now has a total of ".TF::DARK_GRAY.$this->countWPoints($playerID).TF::GREEN." Points."; //TODO::Translate
@@ -295,10 +296,11 @@ class Main extends PluginBase implements Listener{
 		$remSuceededLvls = ["warnsys" => false, "clientBan" => false, "ipBan" => false];
 		$playerID = $this->getWarnPlayerByName($playerName);
 		if($this->warnsys->exists($playerID)){
+			$remSuceededLvls["warnsys"] = true;
 			$warnData = $this->warnsys->get($playerID);
 			$index = count($warnData);
 			$index--;
-			$warnData[$index] = NULL;
+			unset($warnData[$index]);
 			$this->warnsys->set($playerID, $warnData);
 			$this->warnsys->save();
 		}
@@ -349,12 +351,12 @@ class Main extends PluginBase implements Listener{
 		$tempStuffArray = $this->warnsys->get($playerID);
 		if($tempStuffArray != NULL){
 			$count = 0;
-			$Index = 0;
+			$index = 0;
 			foreach($tempStuffArray as $playerData){
-				if($Index != 0){
+				if($index != 0){
 					$count = $count + $playerData[1];
 				}
-				$Index++;
+				$index++;
 			}
 			return $count;
 		}
@@ -370,8 +372,8 @@ class Main extends PluginBase implements Listener{
 	} 
 	private function getWarnPlayerByName($playerName){
 		$playerID = NULL;
-		if($this->warnsys->getAll() != NULL){
-			$tempStuffArray = $this->warnsys->getAll();
+		$tempStuffArray = $this->warnsys->getAll();
+		if($tempStuffArray != NULL){
 			foreach($tempStuffArray as $warnObject){
 				if(isset($warnObject[0])){
 					if(isset($warnObject[0]['RealPlayerName'])){

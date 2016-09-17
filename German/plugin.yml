@@ -1,6 +1,6 @@
 name: BanWarn
 api: [1.13.0, 2.0.0]
-version: 1.2.1-InDev
+version: 1.2.1-InDev-finalRC
 load: POSTWORLD
 main: robske_110\BanWarn\Main
 author: robske_110
@@ -15,7 +15,7 @@ commands:
   description: Gibt Infos über die Warnungspunkte eines Spielers und die Gründe
   usage: "/warninfo <SpielerName>"
   permission: BanWarn.command.warninfo
-  aliases: [wi, warni]
+  aliases: [wi, warni, winfo]
  warnpardon:
   description: Löscht alle Warnungen eines Spielers oder entfernt einzelne
   usage: "/warnpardon <PlayerName>"
