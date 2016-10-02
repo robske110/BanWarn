@@ -1,15 +1,15 @@
 # BanWarn
 
 ##2.0.0 release schedule:
-- 1.Sep 2016::first ALPHA release
-- 15.Sep 2016:: first BETA release
-- 1.Oct 2016::final 2.0.0 release
+- middle of October 2016::first ALPHA release
+- middle of November::first BETA release
+- end of December 2016::final 2.0.0 release
+
+####This is the 2.0.0 branch. That means a MASSIVE update is coming. It'll take some time though, as it'll have many new cool features.
 
 **TravisCI** [![TravisCI](https://api.travis-ci.org/robske110/BanWarn.svg?branch=master)](https://travis-ci.org/robske110/BanWarn)
 
 ###Version `1.2.0` is **stable** for production and recommended for all BanWarn users! [**RELEASE**](https://github.com/robske110/BanWarn/releases/tag/1.2.0)
-
-####This is the 2.0.0 branch. Yep, you heard right a MASSIVE update is coming. It'll take some time though, as it'll have many new cool features. Prepare for looong alpha and beta periods!
 
 #####Look in issue https://github.com/robske110/BanWarn/issues/1 for detailed info and Changelogs for 1.1.0 and 1.2.0 and use it for FeatureRequests!
 

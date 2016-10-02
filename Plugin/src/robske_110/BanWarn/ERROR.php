@@ -3,7 +3,9 @@
 namespace robske_110\BanWarn;
 
 use robske_110\BanWarn\Utils;
-
+/**
+ * TODO:Should this really be done?
+*/
 abstract class error{
 	const ERR_LVL_LOW = 0;
 	const ERR_LVL_NORMAL = 1;

@@ -14,6 +14,7 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 
 use robske_110\BanWarn\data\DataManager;
+use robske_110\BanWarn\Translator;
 
 class BanWarn extends PluginBase implements Listener{
 	const PLUGIN_MAIN_PREFIX = "[BanWarn] ";
@@ -21,15 +22,22 @@ class BanWarn extends PluginBase implements Listener{
 	const CURRENT_CONFIG_VERSION = 4.05;
 	
 	private $dataManager;
-	public $tempWPUsers; //TODO:move to idk... (CmdManager?)
+	public $tempWPUsers; //TODO: redo cmds, central cmd manager, cmd classes... [usage and so on has to be able to get translated!]
 
 	public function onEnable(){
 		$this->getServer()->getLogger()->critical(self::PLUGIN_MAIN_PREFIX."You are using a version which is known to not work! Please get the latest stable version from https://github.com/robske110/BanWarn/releases!");
 		Utils::init($this, true); //TODO::addConfigValueForDebug
 		$this->dataManager = new DataManager($this, $this->getServer());
-		if(!$this->dataManager->isFullyInitialized()){
-			Utils::warning("BanWarn was unable to fully initialize its DataBases. You may want to open an issue at https://github.com/robske110/BanWarn/ ErrorID: ERR_9999"); //TODO::ERR
-		}
+		//Translator test:
+		$this->translator = new Translator($this, $this->getServer(), "eng");
+		echo($this->translator->translate("cmd.warn.desc"));
+		echo($this->translator->translate("test.multiplevar.text", "0v", "1v"));
+		echo($this->translator->translate("test.multiplevar.text", "0v"));
+		echo($this->translator->translate("test.multiplevar.text", "0v", "1v", "2v"));
+		#...
+		//if(!$this->dataManager->isFullyInitialized()){
+		//	Utils::warning("BanWarn was unable to fully initialize its DataBases. You may want to open an issue at https://github.com/robske110/BanWarn/ with the full startup log. ErrorID: ERR_9999"); //TODO::ERR
+		//}
 		//$this->cmdManager = new CmdMananger();
 	}
 	

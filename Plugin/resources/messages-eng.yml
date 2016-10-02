@@ -17,6 +17,9 @@ cmd:
     desc: "Wipes all warns of a player or removes single warns"
     usage: "/warnpardon <PlayerName>"
     msgs: #TODO
+test:
+  multiplevar:
+    text: "Var0: &&var0&& Var1: &&var1&& ARGHHHHH"
 perm:
   BanWarn.command.warn: "Allows to run the /warn command"
   BanWarn.command.warninfo: "Allows to run the /warninfo command"

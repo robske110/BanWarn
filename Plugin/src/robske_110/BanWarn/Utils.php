@@ -90,6 +90,7 @@ abstract class Utils{
 				case self::DEBUG_LVL_NORMAL: $msg = "[NORMAL] ".$msg."<"; break;
 				case self::DEBUG_LVL_PRIOR: $msg = "[PRIOR] !".$msg."!<"; break;
 			}
+			$msg .= "\n";
 			fwrite(self::$debugFile, $msg);
 		}
 	}

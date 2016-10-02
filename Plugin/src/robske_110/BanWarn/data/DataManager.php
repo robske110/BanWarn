@@ -68,7 +68,7 @@ class DataManager{
 		if(!is_array($warnData)){
 			$this->userDataMgr->addWarnPlayer($warndata['RealPlayerName']);
 		}
-		if(!isset($warndata[0]["RealClientID"]){ //ClientID can be got by the key too...
+		if(!isset($warndata[0]["RealClientID"])){ //ClientID can be got by the key too...
 			$isDamaged = true;
 		}
 		if(!isset($warndata[0]["RealPlayerName"]) && (!isset($warndata[1]) || !is_array($warndata[1]))){ //Useless entry... -_-
@@ -80,11 +80,10 @@ class DataManager{
 		if($isDamaged){
 			return self::STATE_DAMAGED;
 		}
-		return STATE_OK;
+		return self::STATE_OK;
 	}
 	
 	public function dataBaseUpgrade($version, $newVersion){
-		$this->addWarnPlayerID();
 		if($version == NULL){ //User upgrading from 1.x.x to 2.x.x
 			if($this->config->get("ConfigVersion") >= 4){ //TODO:detect when the user is entering stop exit or abort and then call shutdown.
 				Utils::critical("Your config version says you have already used 2.0.0 while your DataBase version seems to still be at 1.x.x states! The plugin can try to upgrade the database regardless of this mismatch though! If you are unsure what to do KILL the Server in the next 20 secounds and backup your BanWarn plugin folder. Then start the server again and ignore this messsage. If this plugin doesn't continue to function normally after you performed these steps, please contact the plugin developer (robske_110) with the following ErrorID: E_9901!"); //TODO::ERR
@@ -111,7 +110,7 @@ class DataManager{
 			Utils::debug(print_r($this->clientBan->getAll(true)));
 			$oldWarnSys = new Config($this->main->getDataFolder() . "warnsys.yml", Config::YAML, array());
 			if(!is_array($oldWarnData = $oldWarnSys->getAll())){
-				throw new \Exception("Old warnData could not be restored")
+				throw new \Exception("Old warnData could not be restored");
 			}
 			foreach($this->warnData->getAll() as $initialClientID => $warnData){
 				/*
@@ -140,7 +139,7 @@ class DataManager{
 	}
 
 	/**
-	 * INTERNAL
+	 * This function is not meant to be used by extensions!
 	*/
 	public function banClient($clientID){
 		if($this->config->get("Client-ban")){
@@ -149,6 +148,23 @@ class DataManager{
 		}
 	}
 	
+	/**
+	 * EXTENSION PLUGINS: DO NOT USE THIS FUNCTION!
+	*/
+	public function pardonClient($clientID){
+		/*
+		if($this->config->get("Client-ban")){
+			$this->clientBan->set($clientID);
+			$this->clientBan->save(true);
+		}
+		*/
+	}
+	
+	/**
+	 * @param $warnPlayerID WarnPlayerID
+	 * @return Count of warnpoints.
+	 * @todo REWRITE!
+	*/
 	public function getWarnPoints($warnPlayerID){
 		if($tempStuffArray = $this->warnData->get($warnPlayerID) != NULL){
 			$count = 0;
@@ -162,14 +178,17 @@ class DataManager{
 		}
 		return -1;
 	}
-	//TODO:move to user data mgr
-	#a small note: ID is referred to as any ID which identifies a Player. WarnID is an id which tries to represent one human being. This is of course not possible at all so it is just random guessing.
+	private function addWarnToPlayer($warnPlayerID, $reason, $points){
+		
+	}
+	//TODO:move to user data mgr!
+	#a small note: ID is referred to as any ID which identifies a Player. WarnPlayerID/warnPlayerID is an id which tries to represent one human being. This is of course not possible at all so it is just random guessing.
 	/**
-	 * If both IDs are unknown this qill also create a new WarnPlayer.
+	 * If both IDs are unknown this will also create a new WarnPlayer.
 	 * @param mixed $id1 ID1 (Type specified by $type1)
 	 * @return mixed $id2 ID2 (Type specified by $type2)
-	 * @param int $type1 Override type of $id1 [Can be: UserDataMgr::TYPE_CLIENTID UserDataMgr::TYPE_IP UserDataMgr::TYPE_PlayerName]
-	 * @param int $type2 Override type of $id2 [Can be: UserDataMgr::TYPE_CLIENTID UserDataMgr::TYPE_IP UserDataMgr::TYPE_PlayerName]
+	 * @param int $type1 Override type of $id1 [Can be: UserDataMgr::TYPE_CLIENTID UserDataMgr::TYPE_IP UserDataMgr::TYPE_PLAYERNAME]
+	 * @param int $type2 Override type of $id2 [Can be: UserDataMgr::TYPE_CLIENTID UserDataMgr::TYPE_IP UserDataMgr::TYPE_PLAYERNAME]
 	 * @return int $warnPlayerID
 	*/
 	/*
@@ -187,9 +206,6 @@ class DataManager{
 		}
 		$this->finalAddParamForPlayer($warnPlayerID, $idk1, $idk2);
 		return $warnPlayerID
-	}
-	private function addWarnToPlayer($warnPlayerID, $reason, $points){
-		
 	}
 	private function getWarnPlayerIDbyClientID($playerName){
 		
@@ -215,7 +231,7 @@ class DataManager{
 	*/
 }
 
-//New array design of warnData: $banWarnPlayerID => []
+//New array design of warnData: $banWarnPlayerID => [[UserDataMgr::TYPE_CLIENTID => $playerClientID, UserDataMgr::TYPE_IP => $playerIP, UserDataMgr::TYPE_PLAYERNAME]]
 
 //Theory is when you know something, but it doesn't work. Practice is when something works, but you don't know why. Programmers combine theory and practice: Nothing works and they don't know why!
 //Just keep doing though. Just do it. Just keep working. Never give up.
