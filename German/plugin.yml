@@ -1,6 +1,6 @@
 name: BanWarn
 api: [1.13.0, 2.0.0]
-version: 1.2.1-InDev-finalRC
+version: 1.2.1
 load: POSTWORLD
 main: robske_110\BanWarn\Main
 author: robske_110
