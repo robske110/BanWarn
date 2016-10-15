@@ -328,16 +328,14 @@ class Main extends PluginBase implements Listener{
 		}
 	}
 	private function banIP($ip, $reason, $playerName = "unknown", $issuer = "unknown"){
-		if($this->config->get("IP-Ban")){
-			foreach($this->getServer()->getOnlinePlayers() as $player){
-				if($player->getAddress() === $ip){
-					$player->kick($reason, false);
-				}
+		foreach($this->getServer()->getOnlinePlayers() as $player){
+			if($player->getAddress() === $ip){
+				$player->kick($reason, false);
 			}
+		}
+		if($this->config->get("IP-Ban")){
 			$this->getServer()->getNetwork()->blockAddress($ip, -1);
 			$this->getServer()->getIPBans()->addBan($ip, "BanWarnPluginBan BannedPlayer:".$playerName, null, $issuer);
-		}else{
-			$player->kick($reason, false);
 		}
 	}
 	private function sendMsgToSender($sender, $message){
