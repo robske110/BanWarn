@@ -10,15 +10,14 @@ branches:
  - 2.0.0
 
 before_script:
- - phpenv config-rm xdebug.ini
- - git clone --depth=50 --branch=php7 https://github.com/ClearSkyTeam/ClearSky.git
+ - git clone --recursive --branch=mcpe-1.0 https://github.com/pmmp/PocketMine-MP.git
  - pecl install channel://pecl.php.net/pthreads-3.1.6
  - pecl install channel://pecl.php.net/weakref-0.3.2
  - echo | pecl install channel://pecl.php.net/yaml-2.0.0RC8
- - cd ClearSky
+ - cd PocketMine-MP
  - mkdir plugins
  - cd plugins
- - wget -O DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
+ - wget -O DevTools.phar https://jenkins.pmmp.io/job/PocketMine-MP%20DevTools/9/artifact/DevTools_v1.11.1-95929e1d.phar
  - cd /home/travis/build/robske110/BanWarn/
  - cp -rf Travis.php ClearSky/
  - cp -rf English/ ClearSky/plugins/
