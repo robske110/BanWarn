@@ -1,0 +1,9 @@
+--- # https://poggit.pmmp.io/ci/robske110/BanWarn
+branches:
+- master
+projects:
+  lang/English:
+    path: English/
+  lang/German:
+    path: German/
+...
