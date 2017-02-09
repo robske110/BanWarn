@@ -13,14 +13,14 @@ branches:
  - 2.0.0
 
 before_script:
- - git clone --recursive --branch=mcpe-1.0 https://github.com/pmmp/PocketMine-MP.git
+ - git clone --recursive https://github.com/pmmp/PocketMine-MP.git
  - pecl install channel://pecl.php.net/pthreads-3.1.6
  - pecl install channel://pecl.php.net/weakref-0.3.3
  - echo | pecl install channel://pecl.php.net/yaml-2.0.0
  - cd PocketMine-MP
  - mkdir plugins
  - cd plugins
- - wget -O DevTools.phar https://jenkins.pmmp.io/job/PocketMine-MP%20DevTools/9/artifact/DevTools_v1.11.1-95929e1d.phar
+ - wget -O DevTools.phar https://poggit.pmmp.io/r/1590/PocketMine-DevTools.phar
  - cd /home/travis/build/robske110/BanWarn/
  - cp -rf Travis.php PocketMine-MP/
  - cp -rf English/ PocketMine-MP/plugins/
