@@ -83,7 +83,6 @@ class Main extends PluginBase implements Listener{
 			$this->sendMsgToSender($sender, TF::RED."Aborted the warnpardon prompt"); //TODO::Translate
 		}elseif($msg == "last"){
 			$remResult = $this->removeLastWarn($playerName);
-			var_dump($remResult);
 			if($remResult["warnsys"] && $remResult["clientBan"] && $remResult["ipBan"]){
 				$this->sendMsgToSender($sender, TF::GREEN."The last warn from '".TF::DARK_GRAY.$playerName.TF::GREEN."' has been removed! He/she has been unbanned. A server restart may be necassary."); //TODO::Translate TODO::FixServerRestartNeed
 			}elseif($remResult["warnsys"] && $remResult["clientBan"]){
@@ -95,7 +94,6 @@ class Main extends PluginBase implements Listener{
 			}
 		}elseif($msg == "all"){
 			$wipeResult = $this->wipePlayer($playerName);
-			var_dump($wipeResult);
 			if($wipeResult["warnsys"] && $wipeResult["clientBan"] && $wipeResult["ipBan"]){
 				$this->sendMsgToSender($sender, TF::GREEN."All warns from '".TF::DARK_GRAY.$playerName.TF::GREEN."' have been removed! A server restart may be necassary."); //TODO::Translate TODO::FixServerRestartNeed
 			}elseif($wipeResult["warnsys"]){
@@ -136,7 +134,7 @@ class Main extends PluginBase implements Listener{
 		}
 	}
 
-	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
+	public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
 		switch($command->getName()){
 			case "warn":
 			if(isset($args[2])){
@@ -186,12 +184,17 @@ class Main extends PluginBase implements Listener{
 			break;
 			case "warnpardon":
 			if(isset($args[0])){
-				if($sender instanceof Player){
-					$this->tempWPusers[$sender->getName()] = strtolower($args[0]);
+				if($this->getServer()->getPlayer($args[0]) instanceof Player){
+					$playerName = strtolower($this->getServer()->getPlayer($args[0])->getName());
 				}else{
-					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = strtolower($args[0]); //So it won't conflict with player names
+					$playerName = strtolower($args[0]);
 				}
-				$this->sendMsgToSender($sender, TF::GREEN."You are going to remove one warn or wipe all warns from the Player '".TF::DARK_GRAY.strtolower($args[0]).TF::GREEN."'!");
+				if($sender instanceof Player){
+					$this->tempWPusers[$sender->getName()] = $playerName;
+				}else{
+					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = $playerName; //So it won't conflict with player names
+				}
+				$this->sendMsgToSender($sender, TF::GREEN."You are going to remove one warn or wipe all warns from the Player '".TF::DARK_GRAY.$playerName.TF::GREEN."'!");
 				$this->sendMsgToSender($sender, TF::GREEN."If you want to abort this simply type 'abort'");
 				$this->sendMsgToSender($sender, TF::GREEN."Type 'all' to remove all warns.");
 				$this->sendMsgToSender($sender, TF::GREEN."Type 'last' to remove the last warn.");
@@ -370,8 +373,7 @@ class Main extends PluginBase implements Listener{
 	} 
 	private function getWarnPlayerByName($playerName){
 		$playerID = NULL;
-		$tempStuffArray = $this->warnsys->getAll();
-		if($tempStuffArray != NULL){
+		if(($tempStuffArray = $this->warnsys->getAll()) != NULL){
 			foreach($tempStuffArray as $warnObject){
 				if(isset($warnObject[0])){
 					if(isset($warnObject[0]['RealPlayerName'])){

@@ -1,6 +1,6 @@
 name: BanWarn
-api: [2.0.0, 2.1.0, 3.0.0-ALPHA1]
-version: 1.2.1
+api: [3.0.0-ALPHA7]
+version: 1.2.2
 load: POSTWORLD
 main: robske_110\BanWarn\Main
 author: robske_110

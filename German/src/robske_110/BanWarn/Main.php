@@ -134,7 +134,7 @@ class Main extends PluginBase implements Listener{
 		}
 	}
 
-	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
+	public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
 		switch($command->getName()){
 			case "warn":
 			if(isset($args[2])){
@@ -184,12 +184,17 @@ class Main extends PluginBase implements Listener{
 			break;
 			case "warnpardon":
 			if(isset($args[0])){
-				if($sender instanceof Player){
-					$this->tempWPusers[$sender->getName()] = strtolower($args[0]);
+				if($this->getServer()->getPlayer($args[0]) instanceof Player){
+					$playerName = strtolower($this->getServer()->getPlayer($args[0])->getName());
 				}else{
-					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = strtolower($args[0]); //So it won't conflict with player names
+					$playerName = strtolower($args[0]);
 				}
-				$this->sendMsgToSender($sender, TF::GREEN."Du bist kurz davor eine Warnung oder alle Warnungen des Spielers '".TF::DARK_GRAY.strtolower($args[0]).TF::GREEN."' zu entfernen!");
+				if($sender instanceof Player){
+					$this->tempWPusers[$sender->getName()] = $playerName;
+				}else{
+					$this->tempWPusers["C.O.N.S.O.L.E_moreThan16Characters"] = $playerName; //So it won't conflict with player names
+				}
+				$this->sendMsgToSender($sender, TF::GREEN."Du bist kurz davor eine Warnung oder alle Warnungen des Spielers '".TF::DARK_GRAY.$playerName.TF::GREEN."' zu entfernen!");
 				$this->sendMsgToSender($sender, TF::GREEN."Falls du dies abbrechen möchtest, gebe 'abort' ein");
 				$this->sendMsgToSender($sender, TF::GREEN."Gebe 'all' ein, um alle Warnungen zu entfernen.");
 				$this->sendMsgToSender($sender, TF::GREEN."Gebe 'last' ein, um die letzte Warnung zu entfernen.");
@@ -369,8 +374,7 @@ class Main extends PluginBase implements Listener{
 	} 
 	private function getWarnPlayerByName($playerName){
 		$playerID = NULL;
-		$tempStuffArray = $this->warnsys->getAll();
-		if($tempStuffArray != NULL){
+		if(($tempStuffArray = $this->warnsys->getAll()) != NULL){
 			foreach($tempStuffArray as $warnObject){
 				if(isset($warnObject[0])){
 					if(isset($warnObject[0]['RealPlayerName'])){
