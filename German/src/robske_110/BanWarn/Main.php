@@ -40,7 +40,7 @@ class Main extends PluginBase implements Listener{
 	public function onJoin(PlayerLoginEvent $event){
 		$isAlreadyBanned = false;
 		$playerID = $event->getPlayer()->getClientId();
-		$playerName = $event->getPlayer();
+		$playerName = $event->getPlayer()->getName();
 		foreach($this->clientBan->getAll() as $rawPlayerID){
 			if($playerID == $rawPlayerID){
 				$reason = "";
