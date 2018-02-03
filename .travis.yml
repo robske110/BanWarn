@@ -6,21 +6,29 @@ dist: trusty
 sudo: false
 
 php:
- - 7.0
+ - 7.2
 
 branches:
  - master
  - 2.0.0
 
 before_script:
- - git clone --recursive https://github.com/pmmp/PocketMine-MP.git
- - pecl install channel://pecl.php.net/pthreads-3.1.6
- - pecl install channel://pecl.php.net/weakref-0.3.3
- - echo | pecl install channel://pecl.php.net/yaml-2.0.0
+#- pecl install channel://pecl.php.net/pthreads-3.1.6
+ - git clone https://github.com/krakjoe/pthreads.git --depth=1
+ - cd pthreads
+ - phpize
+ - ./configure
+ - make
+ - make install
+ - cd ..
+ - echo "extension=pthreads.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+ - echo | pecl install channel://pecl.php.net/yaml-2.0.2
+ - git clone --recursive https://github.com/pmmp/PocketMine-MP.git --depth=1
  - cd PocketMine-MP
+ - composer install
  - mkdir plugins
  - cd plugins
- - wget -O DevTools.phar https://poggit.pmmp.io/r/8459/PocketMine-DevTools.phar
+ - wget -O DevTools.phar https://jenkins.pmmp.io/job/PocketMine-MP/lastSuccessfulBuild/artifact/DevTools.phar
  - cd /home/travis/build/robske110/BanWarn/
  - cp -rf Travis.php PocketMine-MP/
  - cp -rf English/ PocketMine-MP/plugins/
