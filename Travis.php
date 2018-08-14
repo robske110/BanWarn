@@ -17,7 +17,7 @@ fclose($pipes[2]);
 
 echo "\n\nReturn value: ". proc_close($server) ."\n";
 
-if(count(glob("plugins/DevTools/BanWarn*.phar")) === 0){
+if(count(glob("plugin_data/DevTools/BanWarn*.phar")) === 0){
 	echo "Failed to create BanWarn phar!\n";
 	exit(1);
 }else{
