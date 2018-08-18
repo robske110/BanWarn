@@ -27,7 +27,7 @@ class DataManager{
 			$this->clientBan = new Config($main->getDataFolder() . "clientBan.list", Config::ENUM, []);
 			$this->config = new Config($main->getDataFolder() . "config.yml", Config::YAML, []);
 			if(!$this->config->check()){
-				Utils::warning("Your config format is somehow broken. Please check it using YAML validators.");
+				Utils::warning("Your config formatiing is broken. Please check it using YAML validators.");
 				Utils::log("The plugin will use the default settings. This may cause database corruption, if you have just updated the version of this plugin!");
 				$this->config = new RAMconfigImmitator();
 			}

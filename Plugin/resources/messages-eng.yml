@@ -1,7 +1,7 @@
 #BanWarn translation file.
 #Be aware that this file will be overwritten by a update.
-#Just copy this file, rename your copied file to messages-customized.yml,
-#make your edits there, and then change the lang setting in config.yml to customized.
+#If you want to make edits here, copy this file, rename your copied file to messages-customized.yml,
+#make your edits there and then change the lang setting in config.yml to customized.
 #Be sure to check this file after an update for possible new message strings.
 ---
 cmd:
