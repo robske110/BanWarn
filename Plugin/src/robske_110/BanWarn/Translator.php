@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace robske_110\BanWarn;
 
@@ -20,7 +21,7 @@ class Translator{
 		'eng' => ['english', 'englisch']
 	];
 	
-	public static function getLangFromFriendlyName($friendlyName){
+	public static function getLangFromFriendlyName(string $friendlyName){
 		$friendlyName = strtolower($friendlyName);
 		foreach(self::$friendlyLangNames as $lang => $friendlyNames){
 			if(in_array($friendlyName,$friendlyNames,true)){
@@ -30,15 +31,15 @@ class Translator{
 		return false;
 	}
 	
-	public static function getLangFileName($lang){
+	public static function getLangFileName(string $lang){
 		return "messages-".$lang.".yml";
 	}  
 	
-	public static function getLangFilePath($lang){
+	public static function getLangFilePath(string $lang){
 		return self::$dataFolder.self::getLangFileName($lang);
 	}
 	
-	public function __construct(BanWarn $main, Server $server, $selectedLang){
+	public function __construct(BanWarn $main, Server $server, string $selectedLang){
 		$this->main = $main;
 		foreach(self::$langs as $lang){
 			$this->main->saveResource(self::getLangFileName($lang));
@@ -49,7 +50,7 @@ class Translator{
 		$this->selectedLang = $selectedLang;
 	}
 	
-	private function baseTranslate($translatedString, $inMsgVars, $translationString){
+	private function baseTranslate(string $translatedString, array $inMsgVars, string $translationString){
 		Utils::debug($translatedString);
 		if(is_string($translatedString)){
 			$cnt = -1;
@@ -59,7 +60,7 @@ class Translator{
 					$translatedString = str_replace("&&var".$cnt."&&", $inMsgVar, $translatedString);
 				}else{
 					$translatedString = $translatedString." var".$cnt.$inMsgVar;
-					Utils::debug("Failed to insert all variables into the translatedString. Data: "."transStr:'".$translationString."' varCnt:".$cnt." inMsgVar:'".$inMsgVar."' transEdString:'".$translatedString."'"); //TODO::ERR
+					Utils::debug("Failed to insert all variables into the translatedString. Data: "."transStr:'".$translationString."' varCnt:".$cnt." inMsgVar:'".$inMsgVar."' transEdString:'".$translatedString."'");
 				}
 			}
 			return $translatedString;
@@ -67,24 +68,24 @@ class Translator{
 		return false;
 	}
 	
-	public function fallbackTranslate($translationString, $inMsgVars){
+	public function fallbackTranslate(string $translationString, array $inMsgVars){
 		$translatedString = $this->fallBackFile->getNested($translationString);
 		$baseTranslateResult = $this->baseTranslate($translatedString, $inMsgVars, $translationString);
 		if($baseTranslateResult !== false){
 			return $baseTranslateResult;
 		}else{
-			Utils::warning("Failed to translate the string '".$translationString."' in the fallback lang '".self::$langs[0]."'!"); //TODO::ERR
+			Utils::warning("Failed to translate the string '".$translationString."' in the fallback lang '".self::$langs[0]."'!");
 			return $translationString;
 		}
 	}
 	
-	public function translate($translationString, ...$inMsgVars){
+	public function translate(string $translationString, ...$inMsgVars){
 		$translatedString = $this->translationFile->getNested($translationString);
 		$baseTranslateResult = $this->baseTranslate($translatedString, $inMsgVars, $translationString);
 		if($baseTranslateResult !== false){
 			return $baseTranslateResult;
 		}else{
-			Utils::debug("Failed to translate the string '".$translationString."' in the lang '".$this->selectedLang."'! Falling back to lang '".self::$langs[0]."'."); //TODO::ERR
+			Utils::debug("Failed to translate the string '".$translationString."' in the lang '".$this->selectedLang."'! Falling back to lang '".self::$langs[0]."'.");
 			return $this->fallbackTranslate($translationString, $inMsgVars);		
 		}
 	}

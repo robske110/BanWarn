@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace robske_110\BanWarn;
 
@@ -13,6 +14,7 @@ use pocketmine\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 
+use robske_110\BanWarn\command\CommandManager;
 use robske_110\BanWarn\data\DataManager;
 use robske_110\BanWarn\Translator;
 
@@ -26,15 +28,18 @@ class BanWarn extends PluginBase implements Listener{
 
 	public function onEnable(){
 		$this->getServer()->getLogger()->critical(self::PLUGIN_MAIN_PREFIX."You are using a version which is known to not work! Please get the latest stable version from https://github.com/robske110/BanWarn/releases!");
+		// TODO CFG CODE
 		Utils::init($this, true); //TODO::addConfigValueForDebug
 		$this->dataManager = new DataManager($this, $this->getServer());
 		//Translator test:
 		$this->translator = new Translator($this, $this->getServer(), "eng");
-		echo($this->translator->translate("cmd.warn.desc"));
-		echo($this->translator->translate("test.multiplevar.text", "0v", "1v"));
-		echo($this->translator->translate("test.multiplevar.text", "0v"));
-		echo($this->translator->translate("test.multiplevar.text", "0v", "1v", "2v"));
+		Utils::debug($this->translator->translate("cmd.warn.desc"));
+		Utils::debug($this->translator->translate("test.multiplevar.text", "0v", "1v"));
+		Utils::debug($this->translator->translate("test.multiplevar.text", "0v"));
+		Utils::debug($this->translator->translate("test.multiplevar.text", "0v", "1v", "2v"));
 		#...
+		$this->commandManager = new CommandManager($this);
+		
 		//if(!$this->dataManager->isFullyInitialized()){
 		//	Utils::warning("BanWarn was unable to fully initialize its DataBases. You may want to open an issue at https://github.com/robske110/BanWarn/ with the full startup log. ErrorID: ERR_9999"); //TODO::ERR
 		//}
@@ -45,7 +50,7 @@ class BanWarn extends PluginBase implements Listener{
 		Utils::close();
 	}
 	
-	public function banClient($clientID){
+	/*public function banClient($clientID){
 		$this->dataBaseManager->banClient($clientID);
 	}
 	
@@ -247,7 +252,7 @@ class BanWarn extends PluginBase implements Listener{
 			}
 		}
 		return $remSuceededLvls;
-	}
+	}*/
 }
 //Theory is when you know something, but it doesn't work. Practice is when something works, but you don't know why. Programmers combine theory and practice: Nothing works and they don't know why!
 //Just keep doing though. Just do it. Just keep working. Never give up.

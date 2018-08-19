@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace robske_110\BanWarn;
 
@@ -86,9 +87,9 @@ abstract class Utils{
 		}
 		if(self::$debugEnabled){
 			switch($debugLvl){
-				case self::DEBUG_LVL_IMPORTED: $msg = "[IMPORTED] ".$msg."<"; break; //Imported debug msgs are imported from logger critical, warning and emergency msgs.
-				case self::DEBUG_LVL_NORMAL: $msg = "[NORMAL] ".$msg."<"; break;
-				case self::DEBUG_LVL_PRIOR: $msg = "[PRIOR] !".$msg."!<"; break;
+				case self::DEBUG_LVL_IMPORTED: $msg = "[IMPORTED] ".$msg; break; //Imported debug msgs are imported from logger critical, warning and emergency msgs.
+				case self::DEBUG_LVL_NORMAL: $msg = "[NORMAL] ".$msg; break;
+				case self::DEBUG_LVL_PRIOR: $msg = "[PRIOR] ".$msg; break;
 			}
 			$msg .= "\n";
 			fwrite(self::$debugFile, $msg);
